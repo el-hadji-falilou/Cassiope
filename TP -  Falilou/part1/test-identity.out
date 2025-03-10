@@ -1,0 +1,229 @@
+Checking identity on 16-bit words
+  Test 1
+    Key = 0e4e908506358e1a5d7e
+    Input = e339
+    First command line = printf "%s" "e339" | ./minicipher -k "0e4e908506358e1a5d7e" 2>&1
+    First output = 98bb
+    Second command line = printf "%s" "98bb" | ./minicipher -d -k "0e4e908506358e1a5d7e" 2>&1
+    Second output = e339
+         OK
+
+  Test 2
+    Key = 6aa8fb202e76fa32f045
+    Input = f5bd
+    First command line = printf "%s" "f5bd" | ./minicipher -k "6aa8fb202e76fa32f045" 2>&1
+    First output = 2efb
+    Second command line = printf "%s" "2efb" | ./minicipher -d -k "6aa8fb202e76fa32f045" 2>&1
+    Second output = f5bd
+         OK
+
+  Test 3
+    Key = 1cf4c0169df8e1723b4e
+    Input = ac5e
+    First command line = printf "%s" "ac5e" | ./minicipher -k "1cf4c0169df8e1723b4e" 2>&1
+    First output = 1b62
+    Second command line = printf "%s" "1b62" | ./minicipher -d -k "1cf4c0169df8e1723b4e" 2>&1
+    Second output = ac5e
+         OK
+
+  Test 4
+    Key = a1ab1f5087e1c372fa8e
+    Input = 5139
+    First command line = printf "%s" "5139" | ./minicipher -k "a1ab1f5087e1c372fa8e" 2>&1
+    First output = 720f
+    Second command line = printf "%s" "720f" | ./minicipher -d -k "a1ab1f5087e1c372fa8e" 2>&1
+    Second output = 5139
+         OK
+
+  Test 5
+    Key = a6738e3c56f03c9f3d2b
+    Input = 5c5b
+    First command line = printf "%s" "5c5b" | ./minicipher -k "a6738e3c56f03c9f3d2b" 2>&1
+    First output = 5902
+    Second command line = printf "%s" "5902" | ./minicipher -d -k "a6738e3c56f03c9f3d2b" 2>&1
+    Second output = 5c5b
+         OK
+
+  Test 6
+    Key = bcf4c814fc1cfab22731
+    Input = b4e8
+    First command line = printf "%s" "b4e8" | ./minicipher -k "bcf4c814fc1cfab22731" 2>&1
+    First output = 6b01
+    Second command line = printf "%s" "6b01" | ./minicipher -d -k "bcf4c814fc1cfab22731" 2>&1
+    Second output = b4e8
+         OK
+
+  Test 7
+    Key = 3e8085f75a99cc62a7e5
+    Input = 208d
+    First command line = printf "%s" "208d" | ./minicipher -k "3e8085f75a99cc62a7e5" 2>&1
+    First output = 9737
+    Second command line = printf "%s" "9737" | ./minicipher -d -k "3e8085f75a99cc62a7e5" 2>&1
+    Second output = 208d
+         OK
+
+  Test 8
+    Key = 6efa8bac54d887563871
+    Input = ee09
+    First command line = printf "%s" "ee09" | ./minicipher -k "6efa8bac54d887563871" 2>&1
+    First output = d27f
+    Second command line = printf "%s" "d27f" | ./minicipher -d -k "6efa8bac54d887563871" 2>&1
+    Second output = ee09
+         OK
+
+  Test 9
+    Key = c3081523b4deb68ce8c5
+    Input = 59a7
+    First command line = printf "%s" "59a7" | ./minicipher -k "c3081523b4deb68ce8c5" 2>&1
+    First output = d6d5
+    Second command line = printf "%s" "d6d5" | ./minicipher -d -k "c3081523b4deb68ce8c5" 2>&1
+    Second output = 59a7
+         OK
+
+  Test 10
+    Key = 9aba796f260e32d5eb85
+    Input = aeba
+    First command line = printf "%s" "aeba" | ./minicipher -k "9aba796f260e32d5eb85" 2>&1
+    First output = 6922
+    Second command line = printf "%s" "6922" | ./minicipher -d -k "9aba796f260e32d5eb85" 2>&1
+    Second output = aeba
+         OK
+
+Checking identity in CBC mode using different lengths
+  Test on 1 bytes
+    Key = 98fb48bc61e2eb793369
+    IV = a174
+    Input = 8
+    First command line = printf "%s" "8" | ./minicipher -M -i "a174" -k "98fb48bc61e2eb793369" 2>&1
+    First output = cb9b
+    Second command line = printf "%s" "cb9b" | ./minicipher -d -M -i "a174" -k "98fb48bc61e2eb793369" 2>&1
+    Second output = 8
+         OK
+
+  Test on 2 bytes
+    Key = 129488da058b646b2a80
+    IV = 95a7
+    Input = 52
+    First command line = printf "%s" "52" | ./minicipher -M -i "95a7" -k "129488da058b646b2a80" 2>&1
+    First output = 1c55
+    Second command line = printf "%s" "1c55" | ./minicipher -d -M -i "95a7" -k "129488da058b646b2a80" 2>&1
+    Second output = 52
+         OK
+
+  Test on 4 bytes
+    Key = 35d73e4ce0425a1198d3
+    IV = ca16
+    Input = ea58
+    First command line = printf "%s" "ea58" | ./minicipher -M -i "ca16" -k "35d73e4ce0425a1198d3" 2>&1
+    First output = 298efa18
+    Second command line = printf "%s" "298efa18" | ./minicipher -d -M -i "ca16" -k "35d73e4ce0425a1198d3" 2>&1
+    Second output = ea58
+         OK
+
+  Test on 5 bytes
+    Key = 94d43b6f39b01f68f59f
+    IV = 3d61
+    Input = 782c6
+    First command line = printf "%s" "782c6" | ./minicipher -M -i "3d61" -k "94d43b6f39b01f68f59f" 2>&1
+    First output = 31af0093
+    Second command line = printf "%s" "31af0093" | ./minicipher -d -M -i "3d61" -k "94d43b6f39b01f68f59f" 2>&1
+    Second output = 782c6
+         OK
+
+  Test on 25 bytes
+    Key = a3d4367815cbf3de834d
+    IV = ffd7
+    Input = b6a8cd7c9860b298dc4851ee5
+    First command line = printf "%s" "b6a8cd7c9860b298dc4851ee5" | ./minicipher -M -i "ffd7" -k "a3d4367815cbf3de834d" 2>&1
+    First output = 68b4cf4db5c2abd847d4892d2d22
+    Second command line = printf "%s" "68b4cf4db5c2abd847d4892d2d22" | ./minicipher -d -M -i "ffd7" -k "a3d4367815cbf3de834d" 2>&1
+    Second output = b6a8cd7c9860b298dc4851ee5
+         OK
+
+  Test on 26 bytes
+    Key = a38f77dd7ba45b49c0f6
+    IV = 527c
+    Input = 90561c502bcf0d5b24ccdb76ce
+    First command line = printf "%s" "90561c502bcf0d5b24ccdb76ce" | ./minicipher -M -i "527c" -k "a38f77dd7ba45b49c0f6" 2>&1
+    First output = 78b67673a025f6801f62cd8a283d
+    Second command line = printf "%s" "78b67673a025f6801f62cd8a283d" | ./minicipher -d -M -i "527c" -k "a38f77dd7ba45b49c0f6" 2>&1
+    Second output = 90561c502bcf0d5b24ccdb76ce
+         OK
+
+  Test on 17 bytes
+    Key = 3c4bbc6360d0df3d46f8
+    IV = 6230
+    Input = 0c8e9f8817e283aef
+    First command line = printf "%s" "0c8e9f8817e283aef" | ./minicipher -M -i "6230" -k "3c4bbc6360d0df3d46f8" 2>&1
+    First output = 3813851f6fd6bf61c37c
+    Second command line = printf "%s" "3813851f6fd6bf61c37c" | ./minicipher -d -M -i "6230" -k "3c4bbc6360d0df3d46f8" 2>&1
+    Second output = 0c8e9f8817e283aef
+         OK
+
+  Test on 18 bytes
+    Key = 957918a315da8d720bba
+    IV = d5f9
+    Input = 904ddc04ac43432645
+    First command line = printf "%s" "904ddc04ac43432645" | ./minicipher -M -i "d5f9" -k "957918a315da8d720bba" 2>&1
+    First output = 5335ea5713094ba54c9c
+    Second command line = printf "%s" "5335ea5713094ba54c9c" | ./minicipher -d -M -i "d5f9" -k "957918a315da8d720bba" 2>&1
+    Second output = 904ddc04ac43432645
+         OK
+
+  Test on 19 bytes
+    Key = aedb10e9937f158802e1
+    IV = c6b9
+    Input = 88248bd36a720e32ec7
+    First command line = printf "%s" "88248bd36a720e32ec7" | ./minicipher -M -i "c6b9" -k "aedb10e9937f158802e1" 2>&1
+    First output = ab813e489aeeb82a6c48
+    Second command line = printf "%s" "ab813e489aeeb82a6c48" | ./minicipher -d -M -i "c6b9" -k "aedb10e9937f158802e1" 2>&1
+    Second output = 88248bd36a720e32ec7
+         OK
+
+  Test on 32 bytes
+    Key = 92cf786b9bd8270139c2
+    IV = 6326
+    Input = dd9f2548c4ee27d3fea2e46d48635333
+    First command line = printf "%s" "dd9f2548c4ee27d3fea2e46d48635333" | ./minicipher -M -i "6326" -k "92cf786b9bd8270139c2" 2>&1
+    First output = e9aa254b61b3dd8dc3ec5d3eb9a195891517
+    Second command line = printf "%s" "e9aa254b61b3dd8dc3ec5d3eb9a195891517" | ./minicipher -d -M -i "6326" -k "92cf786b9bd8270139c2" 2>&1
+    Second output = dd9f2548c4ee27d3fea2e46d48635333
+         OK
+
+Checking identity in CBC mode on random binary files
+  Test on 10 512-byte sectors
+    Key = c4179eadc2c98990d231
+    IV = 08ed
+    Command line = cat <TEMPFILE> | ./minicipher -b -M -i "08ed" -k "c4179eadc2c98990d231" 2>&1 | ./minicipher -b -d -M -i "08ed" -k "c4179eadc2c98990d231" 2>&1 | cmp - <TEMPFILE>
+         OK
+
+  Test on 20 512-byte sectors
+    Key = 86bd9af48df3143c91f5
+    IV = 26cf
+    Command line = cat <TEMPFILE> | ./minicipher -b -M -i "26cf" -k "86bd9af48df3143c91f5" 2>&1 | ./minicipher -b -d -M -i "26cf" -k "86bd9af48df3143c91f5" 2>&1 | cmp - <TEMPFILE>
+         OK
+
+  Test on 30 512-byte sectors
+    Key = b4281bb4056d44a6e7e3
+    IV = a206
+    Command line = cat <TEMPFILE> | ./minicipher -b -M -i "a206" -k "b4281bb4056d44a6e7e3" 2>&1 | ./minicipher -b -d -M -i "a206" -k "b4281bb4056d44a6e7e3" 2>&1 | cmp - <TEMPFILE>
+         OK
+
+  Test on 40 512-byte sectors
+    Key = c5111b3c16451cac9378
+    IV = 32ea
+    Command line = cat <TEMPFILE> | ./minicipher -b -M -i "32ea" -k "c5111b3c16451cac9378" 2>&1 | ./minicipher -b -d -M -i "32ea" -k "c5111b3c16451cac9378" 2>&1 | cmp - <TEMPFILE>
+         OK
+
+  Test on 50 512-byte sectors
+    Key = ebaaec4000f9c7d45bb9
+    IV = 1cc4
+    Command line = cat <TEMPFILE> | ./minicipher -b -M -i "1cc4" -k "ebaaec4000f9c7d45bb9" 2>&1 | ./minicipher -b -d -M -i "1cc4" -k "ebaaec4000f9c7d45bb9" 2>&1 | cmp - <TEMPFILE>
+         OK
+
+  Test on 2048 512-byte sectors
+    Key = abf37ec1fe0907fafccd
+    IV = 69e6
+    Command line = cat <TEMPFILE> | ./minicipher -b -M -i "69e6" -k "abf37ec1fe0907fafccd" 2>&1 | ./minicipher -b -d -M -i "69e6" -k "abf37ec1fe0907fafccd" 2>&1 | cmp - <TEMPFILE>
+         OK
+
