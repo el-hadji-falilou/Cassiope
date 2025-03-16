@@ -45,7 +45,7 @@ file_path = "../crypto-material/pairs-k5_000d_a0a0.txt"
 k5_2=("0000", 0)
 
 for i in range(256):
-    key = ((i & 0x0F) << 4) | ((i & 0xF0) << 8)
+    key = ((i & 0xF0) << 8) | ((i & 0x0F) << 4)
     count=0
 
     with open(file_path, "r") as file:
@@ -74,7 +74,7 @@ for i in range(256):
             if xor_result=="A0A0":
                 count+=1
 
-    if count>k5_2[1]:         
+    if count>k5_2[1]:
         k5_2=(key, count)
 
 k5=hex(k5_1[0]^k5_2[0])[2:].zfill(4)

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ulimit -t 10
 
@@ -28,23 +28,18 @@ if [ ! -x "$PROGNAME" ]; then
 fi
 
 
-echo "Checking basic encryption (a 16-bit word)"
+echo "Checking basic encryption (a 16-bit word)" > response-encryption.0.txt
 for i in $(seq 10); do
   get_N_hexa_bytes 20
   KEY=$RESULT
   get_N_hexa_bytes 4
   INPUT=$RESULT
   OUTPUT=$( printf "%s" "${INPUT}" | $PROGNAME -k "$KEY" 2>&1 )
-  echo "  Test $i"
-  echo "    Key = $KEY"
-  echo "    Input = $INPUT"
-  echo "    Command line = printf \"%s\" \"$INPUT\" | ./minicipher -k \"$KEY\" 2>&1"
-  echo "    Output = $OUTPUT"
-  echo
+  echo "$INPUT, $OUTPUT" >> response-encryption.0.txt
 done
 
 
-echo "Checking CBC encryption"
+echo "Checking CBC encryption" >> response-encryption.0.txt
 for i in 1 2 4 5 25 26 17 18 19 32; do
   get_N_hexa_bytes 20
   KEY=$RESULT
@@ -53,11 +48,11 @@ for i in 1 2 4 5 25 26 17 18 19 32; do
   get_N_hexa_bytes $i
   INPUT=$RESULT
   OUTPUT=$( printf "%s" "${INPUT}" | $PROGNAME -M -i "$IV" -k "$KEY" 2>&1 )
-  echo "  Test on $i bytes"
-  echo "    Key = $KEY"
-  echo "    IV = $IV"
-  echo "    Input = $INPUT"
-  echo "    Command line = printf \"%s\" \"$INPUT\" | ./minicipher -M -i \"$IV\" -k \"$KEY\" 2>&1"
-  echo "    Output = $OUTPUT"
-  echo
+  echo "$INPUT, $OUTPUT" >> response-encryption.0.txt
 done
+
+if diff -q <(grep -v '^$' response-encryption.0.txt) <(grep -v '^$' test-encryption.0.txt) > /dev/null 2>&1; then
+    echo "SUCCESS"
+else
+    echo "FAILED"
+fi

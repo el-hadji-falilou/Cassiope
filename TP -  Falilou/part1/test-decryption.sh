@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ulimit -t 10
 
@@ -28,17 +28,18 @@ if [ ! -x "$PROGNAME" ]; then
 fi
 
 
-echo "Checking basic decryption (a 16-bit word)"
+echo "Checking basic decryption (a 16-bit word)" > response-decryption.0.txt
 for i in $(seq 20); do
   get_N_hexa_bytes 20
   KEY=$RESULT
   get_N_hexa_bytes 4
   INPUT=$RESULT
   OUTPUT=$( printf "%s" "${INPUT}" | $PROGNAME -d -k "$KEY" 2>&1 )
-  echo "  Test $i"
-  echo "    Key = $KEY"
-  echo "    Input = $INPUT"
-  echo "    Command line = printf \"%s\" \"$INPUT\" | ./minicipher -d -k \"$KEY\" 2>&1"
-  echo "    Output = $OUTPUT"
-  echo
+  echo "$INPUT, $OUTPUT" >> response-decryption.0.txt
 done
+
+if diff -q <(grep -v '^$' response-decryption.0.txt) <(grep -v '^$' test-decryption.0.txt) > /dev/null 2>&1; then
+    echo "SUCCESS"
+else
+    echo "FAILED"
+fi
