@@ -1,0 +1,10 @@
+<div class="feedback">
+    <h4>Résultat :</h4>
+    <pre>{{ result }}</pre>
+    {% if student_output %}
+    <h4>Sortie de l'étudiant (5 premières lignes) :</h4>
+    <pre>{{ student_output }}</pre>
+    <h4>Sortie attendue (5 premières lignes) :</h4>
+    <pre>{{ expected_output }}</pre>
+    {% endif %}
+</div>
