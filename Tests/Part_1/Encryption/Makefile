@@ -14,9 +14,9 @@ c: minicipher-c
 	ln -s minicipher-c minicipher
 
 python: minicipher-main.py minicipher.py
-	rm -f minicipher
-	ln -s minicipher-main.py minicipher
-	chmod +x minicipher
+	@rm -f minicipher
+	@ln -s minicipher-main.py minicipher
+	@chmod +x minicipher
 
 
 

@@ -1,0 +1,21 @@
+Checking basic decryption (a 16-bit word)
+d42a, 9629
+8b3c, a5d9
+584a, f2d1
+e367, 93a5
+b8da, 413c
+0028, 03a3
+0f32, 678a
+22c0, 7aee
+3006, b7af
+7d84, 6793
+6677, 4bdc
+1d23, 655c
+6c19, 19e4
+91a0, 8806
+c7f8, 4b92
+59df, 7fe1
+3418, 0678
+e30c, 18ad
+6690, 942a
+1c66, 2a84

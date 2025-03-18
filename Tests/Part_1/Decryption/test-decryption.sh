@@ -21,39 +21,23 @@ get_N_hexa_bytes () {
 }
 
 
-
 if [ ! -x "$PROGNAME" ]; then
   echo "\"$PROGNAME\" is not a valid executable."
   exit -1
 fi
 
 
-echo "Checking basic encryption (a 16-bit word)" > response-encryption.0.txt
-for i in $(seq 10); do
-  get_N_hexa_bytes 20
-  KEY=$RESULT
-  echo $KEY
-  get_N_hexa_bytes 4
-  INPUT=$RESULT
-  echo $INPUT
-  OUTPUT=$( printf "%s" "${INPUT}" | $PROGNAME -k "$KEY" 2>&1 )
-  echo "$INPUT, $OUTPUT" >> response-encryption.0.txt
-done
-
-
-echo "Checking CBC encryption" >> response-encryption.0.txt
-for i in 1 2 4 5 25 26 17 18 19 32; do
+echo "Checking basic decryption (a 16-bit word)" > response-decryption.0.txt
+for i in $(seq 20); do
   get_N_hexa_bytes 20
   KEY=$RESULT
   get_N_hexa_bytes 4
-  IV=$RESULT
-  get_N_hexa_bytes $i
   INPUT=$RESULT
-  OUTPUT=$( printf "%s" "${INPUT}" | $PROGNAME -M -i "$IV" -k "$KEY" 2>&1 )
-  echo "$INPUT, $OUTPUT" >> response-encryption.0.txt
+  OUTPUT=$( printf "%s" "${INPUT}" | $PROGNAME -d -k "$KEY" 2>&1 )
+  echo "$INPUT, $OUTPUT" >> response-decryption.0.txt
 done
 
-if diff -q <(grep -v '^$' response-encryption.0.txt) <(grep -v '^$' test-encryption.0.txt) > /dev/null 2>&1; then
+if diff -q <(grep -v '^$' response-decryption.0.txt) <(grep -v '^$' test-decryption.0.txt) > /dev/null 2>&1; then
     echo "SUCCESS"
 else
     echo "FAILED"

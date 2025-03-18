@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP Cryptanalyse - Partie 1</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll("form").forEach(form => {
+              form.addEventListener("submit", function(event) {
+                  event.preventDefault();
+
+                  const formData = new FormData(form);
+                  const question = form.getAttribute("action").split("/")[2];
+
+                  fetch(`/submit_code/${question}`, {
+                      method: "POST",
+                      body: formData
+                  })
+                  .then(response => response.text())
+                  .then(html => {
+                      document.getElementById(`feedback${question}`).innerHTML = html;
+                  })
+                  .catch(error => {
+                      console.error("Erreur lors de la soumission du formulaire :", error);
+                  });
+              });
+          });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>TP Cryptanalyse - Partie 1</h1>
+
+    <section id="introduction">
+        <h2>Introduction</h2>
+        <p>
+          L'objectif de ce TP est d'étudier une primitive de chiffrement par bloc (blockcipher) minimaliste, nommée MiniCipher.
+          Cette primitive est minimaliste car elle manipule des blocs de 16 bits avec des clés de 80 bits. Cependant, il est possible d'étendre MiniCipher pour ressembler à un vrai blockcipher. 
+          L'attaque par cryptanalyse différentielle proposée ici présente les techniques de base utilisées pour casser des cryptosystèmes réels.
+        </p>
+    </section>
+
+    <section id="minicipher">
+      <h2>2. Présentation de MiniCipher</h2>
+      <p>
+        MiniCipher utilise des blocs de 16 bits et une clé de 80 bits (composée de 5 sous-clés de 16 bits chacune).<br>
+        Le chiffrement se déroule en 4 étapes (ou rounds), chaque round se compose des opérations suivantes :
+      </p>
+      <ul>
+        <li>XOR avec une sous-clé (16 bits)</li>
+        <li>Substitution par S-box (non-linéaire)</li>
+        <li>Permutation des bits (sauf au dernier round)</li>
+      </ul>
+    </section>
+
+    <section id="part1">
+      <h2>3. Première partie : Chiffrement et déchiffrement</h2>
+      <h3>Description détaillée de MiniCipher</h3>
+      <p>
+        <strong>S-Box :</strong> <br>
+        x : 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F<br>
+        S(x) : 14  4  13  1  2  F  B  8  3  A  6  C  5  9  0  7
+      </p>
+      <p>
+        <strong>Permutation :</strong> (positions avant → après)<br>
+        0→0, 1→4, 2→8, 3→12, 4→1, 5→5, 6→9, 7→13, 8→2, 9→6, 10→10, 11→14, 12→3, 13→7, 14→11, 15→15
+      </p>
+    </section>
+
+    <section id="download">
+      <h2>Téléchargement des fichiers</h2>
+      <p>Téléchargez les fichiers nécessaires pour réaliser le TP :</p>
+      <ul>
+          <li><a href="/download/minicipher.py" download>minicipher.py (à compléter)</a></li>
+          <li><a href="/download/test-encryption.sh" download>test-encryption.sh</a></li>
+          <li><a href="/download/test-decryption.sh" download>test-decryption.sh</a></li>
+          <li><a href="/download/test-identity.sh" download>test-identity.sh</a></li>
+      </ul>
+    </section>
+
+    <h3>Au travail</h3>
+    <ol>
+      <div class="question">
+        <h3>Question 1 : Implémentation de encrypt_round</h3>
+        <p>Implémentez la fonction <code>encrypt_round</code> qui calcule une étape (un round) du blockcipher.</p>
+        <p>Une étape de chiffrement consiste en la succession des étapes suivantes :</p>
+        <ul>
+            <li>Ajout (au sens XOR) de la sous-clé d'étape (donnée par le paramètre <code>key</code>).</li>
+            <li>Application des S-Boxes sur chacun des quatre quartets du mot de 16 bits.</li>
+            <li>Si ce n'est pas le dernier tour, application de la permutation.</li>
+        </ul>
+      </div>
+
+      <div class="question">
+        <h3>Question 2 : Implémentation de encrypt</h3>
+        <p>Implémentez la fonction <code>encrypt</code> qui réalise le calcul complet du chiffrement par MiniCipher.</p>
+        <p>Le chiffrement complet d'un bloc se déroule en 4 étapes (la dernière ne faisant pas intervenir de permutation), suivi de l'ajout (au sens XOR) de la dernière sous-clé.</p>
+        <form action="/submit_code/2" method="post" enctype="multipart/form-data">
+          <label for="code2">Téléverser votre fichier Python :</label>
+          <input type="file" id="code2" name="code" accept=".py" required>
+          <button type="submit">Soumettre</button>
+        </form>
+        <div id="feedback2">
+          {% if result2 %}
+          <div class="feedback">
+              <h4>Résultat :</h4>
+              <pre>{{ result2 }}</pre>
+              {% if student_output2 %}
+              <h4>Sortie de l'étudiant (5 premières lignes) :</h4>
+              <pre>{{ student_output2 }}</pre>
+              <h4>Sortie attendue (5 premières lignes) :</h4>
+              <pre>{{ expected_output2 }}</pre>
+              {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="question">
+        <h3>Question 3 : Implémentation de decrypt</h3>
+        <p>Implémentez la fonction <code>decrypt</code> qui réalise le calcul complet du déchiffrement.</p>
+        <p>Pour cela, vous devez implémenter les fonctions suivantes :</p>
+        <ul>
+            <li><code>init_inverse_ops</code> : remplit les tableaux décrivant les inverses des permutations et S-Boxes.</li>
+            <li><code>decrypt_round</code> : code le déchiffrement d'un round.</li>
+            <li><code>decrypt</code> : code le déchiffrement complet.</li>
+        </ul>
+        <form action="/submit_code/3" method="post" enctype="multipart/form-data">
+          <label for="code3">Téléverser votre fichier Python :</label>
+          <input type="file" id="code3" name="code" accept=".py" required>
+          <button type="submit">Soumettre</button>
+        </form>
+        <div id="feedback3">
+          {% if result3 %}
+          <div class="feedback">
+              <h4>Résultat :</h4>
+              <pre>{{ result3 }}</pre>
+              {% if student_output3 %}
+              <h4>Sortie de l'étudiant (5 premières lignes) :</h4>
+              <pre>{{ student_output3 }}</pre>
+              <h4>Sortie attendue (5 premières lignes) :</h4>
+              <pre>{{ expected_output3 }}</pre>
+              {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="question">
+          <h3>Question 4 : Validation de l'implémentation</h3>
+          <p>Lorsque vous serez convaincu que votre implémentation est correcte, validez la première partie du TP en lançant les trois scripts avec le label correspondant au nom du module.</p>
+          <p>Vous préparerez une archive contenant toutes les choses utiles à l'aide des commandes suivantes :</p>
+          <pre>
+          ./test-encryption.sh <label> > test-encryption.out
+          ./test-decryption.sh <label> > test-decryption.out
+          ./test-identity.sh <label> > test-identity.out
+          tar cvzf partie-1.tgz <fichiers sources> *.out
+          </pre>
+      </div>
+    </ol>
+  </body>
+</html>

@@ -12,8 +12,6 @@ if [ ! -f "$CODE_FILE" ]; then
     exit 1
 fi
 
-echo "Création de l'exécutable avec Make..."
-
 # Exécuter la commande Make pour compiler l'exécutable
 make python
 
@@ -22,8 +20,6 @@ if [ ! -f "$EXECUTABLE_FILE" ]; then
     echo "L'exécutable minicipher n'a pas été créé. Vérifiez la compilation."
     exit 1
 fi
-
-echo "Lancement des tests via test-encryption.sh..."
 
 # Exécuter le script de test avec l'argument `0` et affiche la sortie
 bash test-encryption.sh 0
