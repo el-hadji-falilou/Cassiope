@@ -4,6 +4,8 @@
 
 L'objectif de ce projet est de créer une plateforme en ligne permettant aux étudiants de réaliser des exercices de cryptanalyse. Sur cette plateforme, les étudiants pourront écrire du code, le tester dans un environnement sécurisé, et recevoir un retour instantané sur l'exécution de leurs programmes. Ce projet implique la création d'un éditeur de code interactif, la gestion sécurisée de l'exécution des scripts, ainsi qu'un suivi des utilisateurs et de leur progression.
 
+Les étudiants peuvent accéder aux énoncés des TP ainsi qu’aux fichiers nécessaires à leur réalisation en suivant ce lien: https://paperstreet.picty.org/NET5532/
+
 ---
 
 ## 1. Présentation générale de la plateforme
