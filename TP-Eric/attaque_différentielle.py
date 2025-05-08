@@ -149,12 +149,12 @@ def recover_k4_using_mask(pairs, expected_delta, mask, k5):
     return best_k4
 
 # Lecture des paires pour K4
-pairs_k4_0040 = read_cipher_pairs("pairs-k4_0040.txt")
-pairs_k4_0005 = read_cipher_pairs("pairs-k4_0005.txt")
+pairs_k4_0040_0606 = read_cipher_pairs("pairs-k4_0040_0606.txt")
+pairs_k4_0005_a0a0 = read_cipher_pairs("pairs-k4_0005_a0a0.txt")
 
 # Application des deux masques pour récupérer K4
-best_k4_mask1 = recover_k4_using_mask(pairs_k4_0040, expected_delta=0x0606, mask=0x5555, k5=full_k5)
-best_k4_mask2 = recover_k4_using_mask(pairs_k4_0005, expected_delta=0xa0a0, mask=0xAAAA, k5=full_k5)
+best_k4_mask1 = recover_k4_using_mask(pairs_k4_0040_0606, expected_delta=0x0606, mask=0x5555, k5=full_k5)
+best_k4_mask2 = recover_k4_using_mask(pairs_k4_0005_a0a0, expected_delta=0xa0a0, mask=0xAAAA, k5=full_k5)
 
 full_k4 = best_k4_mask1 | best_k4_mask2
 print(f"Sous-clé K4 complète retrouvée : {full_k4:04x}\n")
@@ -429,85 +429,3 @@ pairs_k1 = read_plaintext_ciphertext("plaintext-ciphertext.txt")
 # Récupération de K1
 full_k1 = recover_k1(full_k5, full_k4, full_k3, full_k2, pairs_k1)
 print(f"Sous-clé K1 complète retrouvée : {full_k1:04x}\n")
-
-###############################################################################
-# 9) Déchiffrement du message en mode CBC
-###############################################################################
-def decrypt_cbc(ciphertext_blocks, key_schedule, iv):
-    """
-    Déchiffre un message en mode CBC avec MiniCipher.
-    
-    - ciphertext_blocks : liste des blocs chiffrés en hexadécimal.
-    - key_schedule : liste des sous-clés (K1 → K5) utilisées pour MiniCipher.
-    - iv : vecteur d'initialisation.
-    
-    Retourne la liste des blocs du message déchiffré.
-    """
-    plaintext_blocks = []
-    previous_block = iv
-
-    for C in ciphertext_blocks:
-        # Étape 1 : Déchiffrer le bloc avec MiniCipher
-        P_temp = decrypt(C, key_schedule)  
-        
-        # Étape 2 : XOR avec le bloc précédent (ou IV pour le premier bloc)
-        P = P_temp ^ previous_block  
-
-        # Stocker le texte clair déchiffré
-        plaintext_blocks.append(P)
-
-        # Mise à jour du bloc précédent pour le prochain tour
-        previous_block = C  
-
-    return plaintext_blocks
-
-###############################################################################
-# Lecture du fichier message.xyz contenant les blocs chiffrés
-###############################################################################
-def load_ciphertext(filename):
-    """
-    Charge un fichier contenant des blocs chiffrés en mode binaire (16 bits).
-    Retourne une liste d'entiers 16 bits extraits des paires d'octets.
-    """
-    with open(filename, "rb") as f:  # ✅ Lecture en binaire
-        data = f.read()  # Lire tout le fichier
-
-    # ✅ Convertir chaque 2 octets (16 bits) en un entier
-    ciphertext_blocks = [int.from_bytes(data[i:i+2], byteorder='little') for i in range(0, len(data), 2)]
-
-    return ciphertext_blocks
-
-# Charger les blocs chiffrés depuis message.xyz
-ciphertext = load_ciphertext("message.xyz")
-
-# Définition de l'IV (vecteur d'initialisation)
-iv = 0x0000  # ⚠ Vérifie que c'est bien l'IV donné dans le TP
-
-# Création de la clé complète sous forme de liste [K1, K2, K3, K4, K5]
-key_schedule = [full_k5, full_k4, full_k3, full_k2, full_k1]
-
-# Déchiffrement en mode CBC
-plaintext_blocks = decrypt_cbc(ciphertext, key_schedule, iv)
-
-###############################################################################
-# Affichage du message déchiffré en ASCII
-###############################################################################
-def convert_to_ascii(plaintext_blocks):
-    """
-    Convertit une liste de blocs 16 bits en une chaîne de texte ASCII.
-    """
-    message = ""
-    for block in plaintext_blocks:
-        # Extraire les 2 caractères ASCII par bloc de 16 bits (chaque octet = 8 bits)
-        char1 = (block >> 8) & 0xFF  # Premier caractère
-        char2 = block & 0xFF  # Deuxième caractère
-        message += chr(char1) + chr(char2)
-
-    return message
-
-# Convertir les blocs en texte ASCII
-decrypted_message = convert_to_ascii(plaintext_blocks)
-
-# Afficher le message final
-print("\n🔓 Message déchiffré :")
-print(decrypted_message)
