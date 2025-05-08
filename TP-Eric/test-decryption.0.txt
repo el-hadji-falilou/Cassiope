@@ -1,0 +1,121 @@
+Checking basic decryption (a 16-bit word)
+  Test 1
+    Key = 534ffb4bdc8b26d8cecf
+    Input = d42a
+    Command line = printf "%s" "d42a" | ./minicipher -d -k "534ffb4bdc8b26d8cecf" 2>&1
+    Output = 9628
+
+  Test 2
+    Key = 0ce38b2525636ee64d64
+    Input = 8b3c
+    Command line = printf "%s" "8b3c" | ./minicipher -d -k "0ce38b2525636ee64d64" 2>&1
+    Output = a5d9
+
+  Test 3
+    Key = c01fab131cd890a9369c
+    Input = 584a
+    Command line = printf "%s" "584a" | ./minicipher -d -k "c01fab131cd890a9369c" 2>&1
+    Output = f2d1
+
+  Test 4
+    Key = 928d3010b8d7bffc4409
+    Input = e367
+    Command line = printf "%s" "e367" | ./minicipher -d -k "928d3010b8d7bffc4409" 2>&1
+    Output = 93a5
+
+  Test 5
+    Key = 9b1ac69bec4a1fe142a9
+    Input = b8da
+    Command line = printf "%s" "b8da" | ./minicipher -d -k "9b1ac69bec4a1fe142a9" 2>&1
+    Output = 413c
+
+  Test 6
+    Key = e9229750e40b9295a8e8
+    Input = 0028
+    Command line = printf "%s" "0028" | ./minicipher -d -k "e9229750e40b9295a8e8" 2>&1
+    Output = 03a3
+
+  Test 7
+    Key = 26f4e536aa77f58cf082
+    Input = 0f32
+    Command line = printf "%s" "0f32" | ./minicipher -d -k "26f4e536aa77f58cf082" 2>&1
+    Output = 678a
+
+  Test 8
+    Key = a50ebbdeb1ab0de18067
+    Input = 22c0
+    Command line = printf "%s" "22c0" | ./minicipher -d -k "a50ebbdeb1ab0de18067" 2>&1
+    Output = 7aee
+
+  Test 9
+    Key = a0277fa38b21dbff6fde
+    Input = 3006
+    Command line = printf "%s" "3006" | ./minicipher -d -k "a0277fa38b21dbff6fde" 2>&1
+    Output = b7af
+
+  Test 10
+    Key = e16fa3d0356273ddb623
+    Input = 7d84
+    Command line = printf "%s" "7d84" | ./minicipher -d -k "e16fa3d0356273ddb623" 2>&1
+    Output = 6793
+
+  Test 11
+    Key = d723422f9735c2b35691
+    Input = 6677
+    Command line = printf "%s" "6677" | ./minicipher -d -k "d723422f9735c2b35691" 2>&1
+    Output = 4bdc
+
+  Test 12
+    Key = 5064858a464a5874dad8
+    Input = 1d23
+    Command line = printf "%s" "1d23" | ./minicipher -d -k "5064858a464a5874dad8" 2>&1
+    Output = 655c
+
+  Test 13
+    Key = a9379c53d2ec620e5545
+    Input = 6c19
+    Command line = printf "%s" "6c19" | ./minicipher -d -k "a9379c53d2ec620e5545" 2>&1
+    Output = 19e4
+
+  Test 14
+    Key = 67540a5b1366332ac602
+    Input = 91a0
+    Command line = printf "%s" "91a0" | ./minicipher -d -k "67540a5b1366332ac602" 2>&1
+    Output = 8806
+
+  Test 15
+    Key = 03d336f97ca5dab6335f
+    Input = c7f8
+    Command line = printf "%s" "c7f8" | ./minicipher -d -k "03d336f97ca5dab6335f" 2>&1
+    Output = 4b92
+
+  Test 16
+    Key = c55bf4982ab1d9f82fb9
+    Input = 59df
+    Command line = printf "%s" "59df" | ./minicipher -d -k "c55bf4982ab1d9f82fb9" 2>&1
+    Output = 7fe1
+
+  Test 17
+    Key = 66526583986da5b80bd4
+    Input = 3418
+    Command line = printf "%s" "3418" | ./minicipher -d -k "66526583986da5b80bd4" 2>&1
+    Output = 0678
+
+  Test 18
+    Key = 7892300410fb74234813
+    Input = e30c
+    Command line = printf "%s" "e30c" | ./minicipher -d -k "7892300410fb74234813" 2>&1
+    Output = 18ad
+
+  Test 19
+    Key = 83e549493952cb9d8ac4
+    Input = 6690
+    Command line = printf "%s" "6690" | ./minicipher -d -k "83e549493952cb9d8ac4" 2>&1
+    Output = 942a
+
+  Test 20
+    Key = 35b70c7f9bbf0969123b
+    Input = 1c66
+    Command line = printf "%s" "1c66" | ./minicipher -d -k "35b70c7f9bbf0969123b" 2>&1
+    Output = 2a84
+
