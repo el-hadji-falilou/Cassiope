@@ -31,7 +31,7 @@
     </script>
   </head>
   <body>
-    <h1>Cryptanalyse d'un blockcipher minimaliste</h1>
+    <h1 style="text-align: center;">Cryptanalyse d'un blockcipher minimaliste</h1>
 
     <section id="Introduction">
         <h2>Introduction</h2>
@@ -436,7 +436,7 @@
             <label for="code2">Téléverser votre fichier Python :</label>
             <input type="file" id="code2" name="code" accept=".py" required>
             <button type="submit">Soumettre</button>
-          </form>          
+          </form>     
         </div>
     </section>
 
@@ -458,20 +458,64 @@
         <p>
           Détailler le chemin différentiel δ₁⁻ = 0040 ⇒ δ₃⁻ = 0606 et calculer sa probabilité.
         </p>
+        <table style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0040</td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0606</td>
+          </tr>
+        </table>
       </div>
       <div class="question">
         <h3>Question 13</h3>
         <p>
           Détailler de même le chemin différentiel δ₁⁻ = 0005 ⇒ δ₃⁻ = a0a0 et calculer sa probabilité.
         </p>
+        <table style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0005</td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0a0a</td>
+          </tr>
+        </table>
+        </div>
       </div>
       <div class="question">
         <h3>Question 14</h3>
         <p>
-          Suite à la validation de la partie 2, vous recevrez le fichier TP-Partie3-GroupeG.tar.gz. Celui-ci contient le corrigé de la partie précédente, ainsi que du 
-          code permettant d'exploiter les chemins décrits ci-dessus. Utilisez le code pour retrouver k4.<br>
-          Utiliqsez le code pour retrouver k4.
+          En vous inspirant du code précédent, exploitez les chemins précedents pour k4.
         </p>
+        <form action="/submit_code/2" method="post" enctype="multipart/form-data">
+          <label for="code2">Téléverser votre fichier Python :</label>
+          <input type="file" id="code2" name="code" accept=".py" required>
+          <button type="submit">Soumettre</button>
+        </form>
       </div>
       <p>
         Le répertoire crypto-material contient en particulier des fichiers pairs-* contenant le contenu nécessaire aux attaques de cette partie.
@@ -479,28 +523,112 @@
       <div class="question">
         <h3>Question 15</h3>
         <p>
-          Sachant que la sous-clé k3 peut se trouver avec des différentielles similaires à celles utilisées ci-dessous, trouver les 2 chemins différentiels utiles de 
-          la forme δ₁⁻ = 0220 ⇒ δ₂⁻ =? et δ₁⁻ = 1010 ⇒ δ₂⁻ =?, ainsi que les probabilités de ces chemins.
+          Sachant que la sous-clé k3 peut se trouver avec des différentielles similaires à celles utilisées ci-dessous, trouver les 2 chemins différentiels utiles
+          avec δ<sub>1</sub><sup>−</sup> = 0220 puis δ<sub>1</sub><sup>−</sup> = 1010, ainsi que les probabilités de ces chemins.
         </p>
+      
+        <div style="display: flex; justify-content: center; gap: 300px; margin: 20px auto;">
+      
+          <!-- Bloc gauche : δ₁⁻ = 0220 -->
+          <div style="border: none; padding: 20px; width: max-content;">
+            <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 0220</h3>
+            <table style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999; padding: 6px;">0220</td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+            </table>
+      
+            <div style="height: 20px;"></div>
+      
+            <table style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+              </tr>
+            </table>
+          </div>
+      
+          <!-- Bloc droite : δ₁⁻ = 1010 -->
+          <div style="border: none; padding: 20px; width: max-content;">
+            <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 1010</h3>
+            <table style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999; padding: 6px;">1010</td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+            </table>
+      
+            <div style="height: 20px;"></div>
+      
+            <table style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+              </tr>
+            </table>
+          </div>
+      
+        </div>
       </div>
+      
       <div class="question">
         <h3>Question 16</h3>
         <p>
           À l'aide des chemins différentiels trouvés et des variables intitulées pairs_k3_delta_in_0220 et pairs_k3_delta_in_1010, adaptez le code de calcul de la 
           sous-clé k4 pour retrouver k3.
         </p>
+        <form action="/submit_code/2" method="post" enctype="multipart/form-data">
+          <label for="code2">Téléverser votre fichier Python :</label>
+          <input type="file" id="code2" name="code" accept=".py" required>
+          <button type="submit">Soumettre</button>
+        </form>
       </div>
       <h3>Récupération des sous-clés 2 et 1</h3>
       <div class="question">
         <h3>Question 17</h3>
         <p>
           Achevez l'attaque pour trouver k2 et k1.<br>
-          Pour k2, n'importe quel chemin différentiel a une probabilité de 1. En considérant k2 par morceaux de 8 bits, comme précédemment, il est facile de retrouver 
-          la sous-clé.<br>
-          Enfin, k1 se retrouve à l'aide d'un simple couple clair/chiffré, puisqu'on peut remonter tout le reste de la fonction de déchiffrement.
+          <ul>
+            <li>Pour k2, n'importe quel chemin différentiel a une probabilité de 1. En considérant k2 par morceaux de 8 bits, comme précédemment, il est facile de 
+              retrouver la sous-clé.</li>
+            <li>Enfin, k1 se retrouve à l'aide d'un simple couple clair/chiffré, puisqu'on peut remonter tout le reste de la fonction de déchiffrement.</li>
         </p>
+        <form action="/submit_code/2" method="post" enctype="multipart/form-data">
+          <label for="code2">Téléverser votre fichier Python :</label>
+          <input type="file" id="code2" name="code" accept=".py" required>
+          <button type="submit">Soumettre</button>
+        </form>
       </div>
-      <h3>Déchiffrement du message donné à votre groupe</h3>
+      <h3>Déchiffrement du message donné à votre groupe.</h3>
       <div class="question">
         <h3>Question 18</h3>
         <p>
