@@ -1,0 +1,55 @@
+{% extends 'teacher/dashboard.html' %}
+
+{% block content %}
+  <h2>Promotion : {{ cohort.name }}</h2>
+  <p><strong>Clé maître :</strong> {{ cohort.key_master }}</p>
+
+  <hr>
+  <h3>Importer du matériel différentiel</h3>
+  <form method="post"
+        action="{{ url_for('admin_promotions.upload_material', pid=cohort.id) }}"
+        enctype="multipart/form-data">
+    <input type="file" name="files" multiple required>
+    <button type="submit">Importer</button>
+  </form>
+
+  {% if cohort.materials %}
+    <h4>Matériel existant</h4>
+    <ul>
+      {% for m in cohort.materials %}
+        <li>
+          {{ m.filename }}
+          {% if m.delta_in %}(Δin={{ m.delta_in }}, Δout={{ m.delta_out }}){% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <hr>
+  <h3>Inscrire un étudiant</h3>
+  <form method="post" action="{{ url_for('admin_promotions.add_student', pid=cohort.id) }}">
+    <label>Email<br><input name="email" type="email" required></label><br><br>
+    <label>Nom complet<br><input name="name" required></label><br><br>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  {% if cohort.users %}
+    <h4>Étudiants inscrits</h4>
+    <ul>
+      {% for u in cohort.users %}
+      <li>
+        {{ u.name }} – {{ u.email }}
+        <form method="post"
+              action="{{ url_for('admin_promotions.delete_student',
+                                  pid=cohort.id, uid=u.id) }}"
+              style="display:inline"
+              onsubmit="return confirm('Supprimer {{ u.name }} ?');">
+          <button type="submit">×</button>
+        </form>
+      </li> 
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <p><a href="{{ url_for('admin_promotions.list_promotions') }}">← Retour à la liste</a></p>
+{% endblock %}

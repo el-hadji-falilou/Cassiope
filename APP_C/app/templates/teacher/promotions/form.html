@@ -1,0 +1,16 @@
+{% extends 'teacher/dashboard.html' %}
+
+{% block content %}
+  <h2>Nouvelle promotion</h2>
+  <form method="post">
+    <label>Nom de la promotion<br>
+      <input name="name" placeholder="Ex : Crypto2025" required>
+    </label><br><br>
+    <label>Clé maître (80-bit hex)<br>
+      <input name="key_master" placeholder="Ex : 7e9914dc7c76d6bf5d8e" required>
+    </label><br><br>
+    <button type="submit">Enregistrer</button>
+  </form>
+
+  <p><a href="{{ url_for('admin_promotions.list_promotions') }}">← Retour à la liste</a></p>
+{% endblock %}

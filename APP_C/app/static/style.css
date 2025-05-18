@@ -1,0 +1,5 @@
+body { font-family: sans-serif; margin: 2em; }
+nav a { margin-right: 1em; }
+.feedback { padding: .5em; margin: .5em 0; }
+.success { background: #e6ffe6; border: 1px solid green; }
+.error   { background: #ffe6e6; border: 1px solid red; }

@@ -1,0 +1,15 @@
+{# app/templates/teacher/promotions/material.html #}
+{% extends 'teacher/dashboard.html' %}
+{% block content %}
+<h2>Matériel pour {{ cohort.name }}</h2>
+
+<form method="post" action="{{ url_for('admin_promotions.upload_material', pid=cohort.id) }}" enctype="multipart/form-data">
+  <input type="file" name="files" multiple required><button>Importer</button>
+</form>
+
+<ul>
+  {% for m in cohort.materials %}
+    <li>{{ m.filename }} (Δin={{ m.delta_in }})</li>
+  {% endfor %}
+</ul>
+{% endblock %}
