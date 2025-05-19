@@ -5,12 +5,49 @@
   <p><strong>Clé maître :</strong> {{ cohort.key_master }}</p>
 
   <hr>
+  <h3>Génération automatique du matériel différentiel</h3>
+  <form method="post"
+        action="{{ url_for('admin_promotions.generate_material', pid=cohort.id) }}">
+    <button type="submit">Générer tout le matériel ({{ config.N_PAIRS }} paires)</button>
+  </form>
+
+<hr>
+<h3>Gestion du matériel différentiel</h3>
+<form method="post"
+      action="{{ url_for('admin_promotions.clear_material', pid=cohort.id) }}"
+      onsubmit="return confirm('Voulez-vous vraiment supprimer tout le matériel différentiel de cette promotion ?');">
+  <button type="submit">Supprimer tout le matériel généré</button>
+</form>
+
+<h3>Définir le message à chiffrer pour la promo</h3>
+<form method="post" action="{{ url_for('admin_promotions.set_message', pid=cohort.id) }}">
+  <textarea name="plaintext_msg" rows="6" cols="60" placeholder="Entrez le message à chiffrer..." required></textarea><br>
+  <button type="submit">Générer le fichier message.xyz (chiffré CBC)</button>
+</form>
+
+
+  <hr>
+  <h3>Matériel existant</h3>
+  {% if cohort.materials %}
+    <ul>
+      {% for m in cohort.materials %}
+        <li>
+          {{ m.filename }}
+          {% if m.delta_in %}(Δin={{ m.delta_in }}, Δout={{ m.delta_out }}){% endif %}
+        </li>
+  {% endfor %}
+    </ul>
+  {% else %}
+    <p>Aucun fichier synchronisé.</p>
+  {% endif %}
+
+  <hr>
   <h3>Importer du matériel différentiel</h3>
   <form method="post"
         action="{{ url_for('admin_promotions.upload_material', pid=cohort.id) }}"
         enctype="multipart/form-data">
     <input type="file" name="files" multiple required>
-    <button type="submit">Importer</button>
+    <button type="submit">Importer manuellement</button>
   </form>
 
   {% if cohort.materials %}
