@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+###########################################################
+# compute-proba.py : computes probabilities for S-Box use #
+###########################################################
+
+import sys
+import json
+
+# S-Box Definition
+s = [0xE, 0x4, 0xD, 0x1,
+     0x2, 0xF, 0xB, 0x8,
+     0x3, 0xA, 0x6, 0xC,
+     0x5, 0x9, 0x0, 0x7]
+
+
+s_inv = [0] * 16
+for i in range(16):
+    s_inv[s[i]] = i
+
+
+# Variables globales
+probas = [[0 for _ in range(16)] for _ in range(16)]
+
+
+##### START_QUESTION_4 #####
+s = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]
+
+# On inverse la S-Box
+s_inv = [0] * 16
+
+
+# probas doit etre un tableau de tableau, probas[i][j] étant le nombre de fois qu'on a δout=j sachant que δin=i
+probas = [[0 for _ in range(16)] for _ in range(16)]
+
+
+# On calcule le tableau des probas
+def compute_probas():
+     global probas, s
+     for delta_in in range(16):        # δin
+        for x in range(16):           # x ∈ [0, 15]
+            x_prime = x ^ delta_in    # x' = x ⊕ δin
+            y = s[x]
+            y_prime = s[x_prime]
+            delta_out = y ^ y_prime   # δout = S(x) ⊕ S(x')
+            probas[delta_in][delta_out] += 1
+##### END_QUESTION_4 #####
+
+
+def print_probas():
+    print(json.dumps(probas))
+
+if __name__ == "__main__":
+    compute_probas()
+    print_probas()

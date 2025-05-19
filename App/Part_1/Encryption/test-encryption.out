@@ -1,0 +1,132 @@
+Checking basic encryption (a 16-bit word)
+  Test 1
+    Key = a1fef343f92d5b3bcaf8
+    Input = 3f63
+    Command line = printf "%s" "3f63" | ./minicipher -k "a1fef343f92d5b3bcaf8" 2>&1
+    Output = 30d8
+
+  Test 2
+    Key = 5241d41ed15cf00758b6
+    Input = efa9
+    Command line = printf "%s" "efa9" | ./minicipher -k "5241d41ed15cf00758b6" 2>&1
+    Output = c6fd
+
+  Test 3
+    Key = 2cf98716c0b5229a8b19
+    Input = e40b
+    Command line = printf "%s" "e40b" | ./minicipher -k "2cf98716c0b5229a8b19" 2>&1
+    Output = bf8a
+
+  Test 4
+    Key = 42c0e59a93e779c8d03a
+    Input = d4ca
+    Command line = printf "%s" "d4ca" | ./minicipher -k "42c0e59a93e779c8d03a" 2>&1
+    Output = 7039
+
+  Test 5
+    Key = 28dc05472a785550819d
+    Input = a754
+    Command line = printf "%s" "a754" | ./minicipher -k "28dc05472a785550819d" 2>&1
+    Output = aeae
+
+  Test 6
+    Key = 8ddc373ac67d7f2e0a40
+    Input = 2ec2
+    Command line = printf "%s" "2ec2" | ./minicipher -k "8ddc373ac67d7f2e0a40" 2>&1
+    Output = f140
+
+  Test 7
+    Key = 2686c6867566051664bf
+    Input = 8e9f
+    Command line = printf "%s" "8e9f" | ./minicipher -k "2686c6867566051664bf" 2>&1
+    Output = 9e69
+
+  Test 8
+    Key = b8037cbf492b74fd8d76
+    Input = 4824
+    Command line = printf "%s" "4824" | ./minicipher -k "b8037cbf492b74fd8d76" 2>&1
+    Output = 1dbf
+
+  Test 9
+    Key = ddb4fffc06cfd9e342ce
+    Input = bdfd
+    Command line = printf "%s" "bdfd" | ./minicipher -k "ddb4fffc06cfd9e342ce" 2>&1
+    Output = 1ef1
+
+  Test 10
+    Key = fdee0458dde256421bad
+    Input = a498
+    Command line = printf "%s" "a498" | ./minicipher -k "fdee0458dde256421bad" 2>&1
+    Output = ba71
+
+Checking CBC encryption
+  Test on 1 bytes
+    Key = 49204c062f81b5bd5608
+    IV = 2076
+    Input = c
+    Command line = printf "%s" "c" | ./minicipher -M -i "2076" -k "49204c062f81b5bd5608" 2>&1
+    Output = 195c
+
+  Test on 2 bytes
+    Key = 3c139bfa3dc7486c5ed4
+    IV = d6b1
+    Input = e4
+    Command line = printf "%s" "e4" | ./minicipher -M -i "d6b1" -k "3c139bfa3dc7486c5ed4" 2>&1
+    Output = e12b
+
+  Test on 4 bytes
+    Key = 645c5624fb4fc389817f
+    IV = b93a
+    Input = 0ae7
+    Command line = printf "%s" "0ae7" | ./minicipher -M -i "b93a" -k "645c5624fb4fc389817f" 2>&1
+    Output = b7ec2887
+
+  Test on 5 bytes
+    Key = f7e34149f9f5880cb0df
+    IV = ab4b
+    Input = 68006
+    Command line = printf "%s" "68006" | ./minicipher -M -i "ab4b" -k "f7e34149f9f5880cb0df" 2>&1
+    Output = d3630c2a
+
+  Test on 25 bytes
+    Key = ca28c5e7dbd2015469a6
+    IV = 3f41
+    Input = f67aecd18590b4c7950fd1caf
+    Command line = printf "%s" "f67aecd18590b4c7950fd1caf" | ./minicipher -M -i "3f41" -k "ca28c5e7dbd2015469a6" 2>&1
+    Output = 278e15ff89ceda8eda506d187e39
+
+  Test on 26 bytes
+    Key = 9fd606deaa5093bff5f4
+    IV = 7717
+    Input = 95c1ac930e0e558b58084aba90
+    Command line = printf "%s" "95c1ac930e0e558b58084aba90" | ./minicipher -M -i "7717" -k "9fd606deaa5093bff5f4" 2>&1
+    Output = 685176c26b11f6b633098d8fec11
+
+  Test on 17 bytes
+    Key = 5ac905a141d3c1372043
+    IV = efe1
+    Input = 7728a9fbe2c0fdfbf
+    Command line = printf "%s" "7728a9fbe2c0fdfbf" | ./minicipher -M -i "efe1" -k "5ac905a141d3c1372043" 2>&1
+    Output = e035acbfbf838cd30329
+
+  Test on 18 bytes
+    Key = 36c45de896e128575c4d
+    IV = cb81
+    Input = fea8c63a133eb25dc5
+    Command line = printf "%s" "fea8c63a133eb25dc5" | ./minicipher -M -i "cb81" -k "36c45de896e128575c4d" 2>&1
+    Output = 8952b346092f5b7e1dc9
+
+  Test on 19 bytes
+    Key = 96527461835eaaed006d
+    IV = 2581
+    Input = 8f49d28b6c405bb97cf
+    Command line = printf "%s" "8f49d28b6c405bb97cf" | ./minicipher -M -i "2581" -k "96527461835eaaed006d" 2>&1
+    Output = 7af07cad486b999d6bde
+
+  Test on 32 bytes
+    Key = 4915ed13303de46450c8
+    IV = 75ae
+    Input = 4b74fe8938ae1824c5f20eac94fb1d7b
+    Command line = printf "%s" "4b74fe8938ae1824c5f20eac94fb1d7b" | ./minicipher -M -i "75ae" -k "4915ed13303de46450c8" 2>&1
+    Output = f151e80270211352b7cae06933b5f120bbb5
+
