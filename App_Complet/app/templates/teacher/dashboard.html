@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard Enseignant</h1>
+<ul>
+  <li><a href="{{ url_for('admin_promotions.list_promotions') }}">Gérer les promotions</a></li>
+</ul>
+
+<h3>Ajouter un enseignant</h3>
+<form method="post" action="{{ url_for('admin_promotions.add_teacher') }}">
+  <input name="email" type="email" placeholder="E-mail" required>
+  <input name="name" placeholder="Nom complet" required>
+  <button type="submit">Ajouter</button>
+</form>
+
+{% endblock %}
