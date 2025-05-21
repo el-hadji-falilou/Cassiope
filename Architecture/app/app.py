@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 import subprocess
 import json
 from flask import Flask, request, jsonify, render_template
@@ -10,6 +9,7 @@ app = Flask(__name__, template_folder="web/templates")
 MINICIPHER_PATH = os.path.abspath("submissions/minicipher.py")
 COMPUTE_PROBAS_PATH = os.path.abspath("submissions/compute_proba.py")
 FIND_KEY = os.path.abspath("submissions/find_key.py")
+EXPECTED_ANSWER_PATH = os.path.abspath("tests/expected_answers.json")
 
 @app.route("/")
 def index():
@@ -56,16 +56,24 @@ def submit_code(question_id):
         "stderr": ""
     }), 200
 
+
 @app.route("/get_probas", methods=["GET"])
 def get_probas():
-    import compute_proba
+    import importlib.util
+    path = os.path.join("submissions", "compute_proba.py")
+
+    spec = importlib.util.spec_from_file_location("compute_proba", path)
+    compute_proba = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(compute_proba)
+
     compute_proba.compute_probas()
     return jsonify(compute_proba.probas)
+
 
 @app.route("/validate_input/<int:question_id>/<string:side>", methods=["POST"])
 def validate_input(question_id, side):
     student_data = request.get_json()
-    with open("expected_answers.json") as f:
+    with open(EXPECTED_ANSWER_PATH) as f:
         expected = json.load(f)
 
     key = f"{question_id}_{side}"
@@ -95,7 +103,7 @@ def validate_input(question_id, side):
             if student_data['proba'][f'val{i}'] != expected_data['proba'][f'val{i}']:
                 errors.append({
                     "type": "proba",
-                    "index": i+16,
+                    "index": i,
                     "expected": expected_data['proba'][f'val{i}'],
                     "provided": student_data['proba'][f'val{i}']
                 })

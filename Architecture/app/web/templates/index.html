@@ -160,10 +160,12 @@
         ].join('\n');
       } else if (question === 4) {
         return [
+            '# S-Box Definition',
             's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
             '',
             '# On inverse la S-Box',
             's_inv = [0] * 16',
+            '# À compléter : inverser la S-box (s_inv)',
             '',
             '',
             '# probas doit etre un tableau de tableau, probas[i][j] étant le nombre de fois qu\'on a δout=j sachant que δin=i',
@@ -301,18 +303,18 @@
     }
 
     async function fillProbabilityTable() {
-      const response = await fetch('/get_probas');
-      const data = await response.json();
+        const response = await fetch('/get_probas');
+        const data = await response.json();
 
-      const rows = document.querySelectorAll("#editable-table tr");
+        const rows = document.querySelectorAll("#table_1 tr");
 
-      for (let i = 2; i < rows.length; i++) {
-        const inputs = rows[i].querySelectorAll("input");
-        const delta_in = i - 2;
-        for (let j = 0; j < 16; j++) {
-          inputs[j].value = data[delta_in][j];
+        for (let i = 2; i < rows.length; i++) {
+            const cells = rows[i].querySelectorAll("td");
+            const delta_in = i - 2;
+            for (let j = 0; j < 16; j++) {
+                cells[j].textContent = data[delta_in][j];
+            }
         }
-      }
     }
 
     function validateInput(questionId, side = "default") {
@@ -640,25 +642,22 @@
               rowHeader.style.textAlign = "center";
               tr.appendChild(rowHeader);
           
-              // Cellules éditables (milieu)
+              // Cellules du milieu
               for (let col = 0; col < 16; col++) {
                 const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.style.width = cellSize_1;
-                input.style.height = cellSize_1;
-                input.style.textAlign = "center";
-                input.style.border = "none";
+                td.textContent = "0";
                 td.style.border = "1px solid #999";
+                td.style.width = cellSize_1;
+                td.style.height = cellSize_1;
+                td.style.textAlign = "center";
                 td.style.backgroundColor = "#fff";
-                td.appendChild(input);
                 tr.appendChild(td);
               }
           
               table_1.appendChild(tr);
             }
         </script>
-        </div>        
+        </div>
         <div class="question">
           <h3>Question 5</h3>
           <p>
@@ -783,11 +782,11 @@
               <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
             </tr>
           </table>
+
           <div class="button-container">
-            <button onclick="validateInput(6)">Valider</button>
+            <button class="validate-button" onclick="validateInput(6)">Valider</button>
           </div>
           <div id="result-6" class="button-container"></div>
-          
         </div>
         <div class="question" id="question-7">
           <h3>Question 7</h3>
@@ -939,7 +938,7 @@
         </table>
         
         <div class="button-container">
-          <button onclick="validateInput(10)">Valider</button>
+          <button class="validate-button" onclick="validateInput(10)">Valider</button>
         </div>
         <div id="result-10" class="button-container"></div>        
       </div>
@@ -977,7 +976,7 @@
         </table>
         
         <div class="button-container">
-          <button onclick="validateInput(11)">Valider</button>
+          <button class="validate-button" onclick="validateInput(11)">Valider</button>
         </div>
         <div id="result-11" class="button-container"></div>        
       </div>
@@ -1029,7 +1028,7 @@
             </table>
 
             <div class="button-container">
-              <button onclick="validateInput(13, 'left')">Valider</button>
+              <button class="validate-button" onclick="validateInput(13, 'left')">Valider</button>
             </div>
             <div id="result-13-left" class="button-container"></div>
           </div>
@@ -1060,7 +1059,7 @@
             </table>
 
             <div class="button-container">
-              <button onclick="validateInput(13, 'right')">Valider</button>
+              <button class="validate-button" onclick="validateInput(13, 'right')">Valider</button>
             </div>
             <div id="result-13-right" class="button-container"></div>
           </div>
