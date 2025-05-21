@@ -1,0 +1,156 @@
+{% extends 'teacher/dashboard.html' %}
+
+{% block content %}
+  <h2>Promotion : {{ cohort.name }}</h2>
+  <p><strong>Clé maître :</strong> {{ cohort.key_master }}</p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flashes">
+    {% for category, message in messages %}
+      <li class="flash-{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+{% if passwords %}
+<h4>Nouveaux étudiants ajoutés :</h4>
+<table>
+  <tr>
+    <th>Nom</th>
+    <th>E-mail</th>
+    <th>Mot de passe provisoire</th>
+  </tr>
+  {% for u in passwords %}
+  <tr>
+    <td>{{ u.name }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.password }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<p>
+  Lien d’accès étudiant : 
+  <a href="https://127.0.0.1:5000/tp" target="_blank">
+    https://127.0.0.1:5000/tp
+  </a>
+</p>
+
+<h4>Membres de la promotion</h4>
+<table>
+  <tr>
+    <th>Nom</th>
+    <th>E-mail</th>
+  </tr>
+  {% for u in cohort.users %}
+  <tr>
+    <td>{{ u.name }}</td>
+    <td>{{ u.email }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+
+
+  <hr>
+  <h3>Génération automatique du matériel différentiel</h3>
+  <form method="post"
+        action="{{ url_for('admin_promotions.generate_material', pid=cohort.id) }}">
+    <button type="submit">Générer tout le matériel ({{ config.N_PAIRS }} paires)</button>
+  </form>
+
+<hr>
+<h3>Gestion du matériel différentiel</h3>
+<form method="post"
+      action="{{ url_for('admin_promotions.clear_material', pid=cohort.id) }}"
+      onsubmit="return confirm('Voulez-vous vraiment supprimer tout le matériel différentiel de cette promotion ?');">
+  <button type="submit">Supprimer tout le matériel généré</button>
+</form>
+
+<h3>Définir le message à chiffrer pour la promo</h3>
+<form method="post" action="{{ url_for('admin_promotions.set_message', pid=cohort.id) }}">
+  <textarea name="plaintext_msg" rows="6" cols="60" placeholder="Entrez le message à chiffrer..." required></textarea><br>
+  <button type="submit">Générer le fichier message.xyz (chiffré CBC)</button>
+</form>
+
+<ul>
+  {% for m in cohort.materials %}
+    <li>
+      {{ m.filename }}
+      <a href="{{ url_for('admin_promotions.download_material', pid=cohort.id, filename=m.filename|urlencode) }}">
+  Télécharger
+        </a>
+
+    </li>
+  {% endfor %}
+</ul>
+
+
+  <hr>
+  <h3>Matériel existant</h3>
+  {% if cohort.materials %}
+    <ul>
+      {% for m in cohort.materials %}
+        <li>
+          {{ m.filename }}
+          {% if m.delta_in %}(Δin={{ m.delta_in }}, Δout={{ m.delta_out }}){% endif %}
+        </li>
+  {% endfor %}
+    </ul>
+  {% else %}
+    <p>Aucun fichier synchronisé.</p>
+  {% endif %}
+
+  <hr>
+  <h3>Importer du matériel différentiel</h3>
+  <form method="post"
+        action="{{ url_for('admin_promotions.upload_material', pid=cohort.id) }}"
+        enctype="multipart/form-data">
+    <input type="file" name="files" multiple required>
+    <button type="submit">Importer manuellement</button>
+  </form>
+
+  {% if cohort.materials %}
+    <h4>Matériel existant</h4>
+    <ul>
+      {% for m in cohort.materials %}
+        <li>
+          {{ m.filename }}
+          {% if m.delta_in %}(Δin={{ m.delta_in }}, Δout={{ m.delta_out }}){% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <hr>
+  <h3>Inscrire un étudiant</h3>
+  <form method="post" action="{{ url_for('admin_promotions.add_student', pid=cohort.id) }}">
+    <label>Email<br><input name="email" type="email" required></label><br><br>
+    <label>Nom complet<br><input name="name" required></label><br><br>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  {% if cohort.users %}
+    <h4>Étudiants inscrits</h4>
+    <ul>
+      {% for u in cohort.users %}
+      <li>
+        {{ u.name }} – {{ u.email }}
+        <form method="post"
+              action="{{ url_for('admin_promotions.delete_student',
+                                  pid=cohort.id, uid=u.id) }}"
+              style="display:inline"
+              onsubmit="return confirm('Supprimer {{ u.name }} ?');">
+          <button type="submit">×</button>
+        </form>
+      </li> 
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <p><a href="{{ url_for('admin_promotions.list_promotions') }}">← Retour à la liste</a></p>
+{% endblock %}

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryptanalyse d'un blockcipher minimaliste</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Ajout de Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+  <script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' }});
+
+    let editors = {};
+
+    require(['vs/editor/editor.main'], function() {
+      // Initialisation des trois éditeurs
+      editors.q1 = monaco.editor.create(document.getElementById('editor-container-q1'), {
+          value: getInitialCode(1),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q2 = monaco.editor.create(document.getElementById('editor-container-q2'), {
+          value: getInitialCode(2),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q3 = monaco.editor.create(document.getElementById('editor-container-q3'), {
+          value: getInitialCode(3),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q4 = monaco.editor.create(document.getElementById('editor-container-q4'), {
+          value: getInitialCode(4),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q8 = monaco.editor.create(document.getElementById('editor-container-q8'), {
+          value: getInitialCode(8),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q9 = monaco.editor.create(document.getElementById('editor-container-q9'), {
+          value: getInitialCode(9),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q12 = monaco.editor.create(document.getElementById('editor-container-q12'), {
+          value: getInitialCode(12),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q14 = monaco.editor.create(document.getElementById('editor-container-q14'), {
+          value: getInitialCode(14),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+
+      editors.q15 = monaco.editor.create(document.getElementById('editor-container-q15'), {
+          value: getInitialCode(15),
+          language: 'python',
+          theme: 'vs-dark',
+          automaticLayout: true,
+          minimap: { enabled: false }
+      });
+    });
+
+    function getInitialCode(question) {
+      if (question === 1) {
+        return [
+            'def encrypt_round(input, key, do_perm):',
+            '     """encrypt_round',
+            '     Parameters',
+            '     ----------',
+            '     input   : the input block',
+            '     key     : the sub-key for this round',
+            '     do_perm : if True, perform the permutation (it is False for the last round)',
+            '',
+            '     Output',
+            '     ------',
+            '     the output value for the round',
+            '     """',
+            '',
+            '     # Subkey Addition',
+            '',
+            '     # S-Box Application',
+            '',
+            '     # If no permutation is performed, we can return the result early',
+            '',
+            '     # Else, we perform the permutation'
+        ].join('\n');
+      } else if (question === 2) {
+        return [
+            'def encrypt(plaintext, keys):',
+            '     """encrypt',
+            '     Parameters',
+            '     ----------',
+            '     plaintext : input plaintext to encrypt',
+            '     keys      : array containing the 5 subkeys (i.e. the complete key)',
+            '',
+            '     Output',
+            '     ------',
+            '     the encrypted value',
+            '     """'
+        ].join('\n');
+      } else if (question === 3) {
+        return [
+            'def init_inverse_ops():',
+            '     """This function populates  s_inv et perm_inv to make decryption possible.',
+            '     Of course, it should be called BEFORE any decryption operation.',
+            '     """',
+            '',
+            '',
+            'def decrypt_round(input, key, do_perm):',
+            '      """decrypt_round',
+            '      Parameters',
+            '      ----------',
+            '      input   : the ciphertext block to decrypt',
+            '      key     : round subkey',
+            '      do_perm : if True, perform the permutation',
+            '',
+            '      Output',
+            '      ------',
+            '      The decrypted plaintext value',
+            '      """',
+            '',
+            'def decrypt(ciphertext, keys):',
+            '      """decrypt',
+            '      Parameters',
+            '      ----------',
+            '      ciphertext : ciphertext to decrypt',
+            '      keys       : array containing the 5 subkeys (i.e. the complete key)',
+            '',
+            '      Output',
+            '      ------',
+            '      The decrypted plaintext',
+            '      """',
+        ].join('\n');
+      } else if (question === 4) {
+        return [
+            's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
+            '',
+            '# On inverse la S-Box',
+            's_inv = [0] * 16',
+            '',
+            '',
+            '# probas doit etre un tableau de tableau, probas[i][j] étant le nombre de fois qu\'on a δout=j sachant que δin=i',
+            'probas = [[0 for _ in range(16)] for _ in range(16)]',
+            '',
+            '',
+            '# On calcule le tableau des probas',
+            'def compute_probas():',
+            '     global probas, s'
+        ].join('\n');
+      } else if (question === 8) {
+        return [
+            's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
+            '# À compléter : inverser la S-box (s_inv)',
+            '',
+            '',
+            'def find_k5_part1() -> int:',
+            '     """',
+            '     Trouve les 8 bits de k5 (masque 0x0F0F) en testant :',
+            '         1. Toutes les clés candidates 8 bits',
+            '         2. Pour chaque paire (C, C\') dans pairs-k5_0b00_0606.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
+            '',
+            '     Retourne la clé avec le plus de succès',
+            '     """'
+        ].join('\n');
+      } else if (question === 9) {
+        return [
+            'def find_k5_part2() -> int:',
+            '     """',
+            '     Trouve les 8 bits de k5 (masque 0xF0F0) en testant :',
+            '         1. Toutes les clés candidates 8 bits',
+            '         2. Pour chaque paire (C, C\') dans pairs-k5_000d_a0a0.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
+            '',
+            '     Retourne la clé avec le plus de succès',
+            '     """'
+        ].join('\n');
+      } else if (question === 12) {
+        return [
+            'def find_k4_part1() -> int:',
+            '    """',
+            '    Trouve 8 bits de k4 (masque 0x5555) en testant :',
+            '        1. Toutes les clés candidates 8 bits',
+            '        2. Pour chaque paire (C, C\') dans pairs-k4_0040_0606.txt,',
+            '           vérifie si C⊕k4 et C\'⊕k4 donnent Δ=0x0606 après S-box inverse',
+            '',
+            '    Retourne la clé avec le plus de succès',
+            '    """',
+            '',
+            '',
+            'def find_k4_part2() -> int:',
+            '    """',
+            '    Trouve 8 bits de k4 (masque 0xAAAA) en testant :',
+            '        1. Toutes les clés candidates 8 bits',
+            '        2. Pour chaque paire (C, C\') dans pairs-k4_0005_a0a0.txt,',
+            '           vérifie si C⊕k4 et C\'⊕k4 donnent Δ=0xA0A0 après S-box inverse',
+            '',
+            '    Retourne la clé avec le plus de succès',
+            '    """'
+        ].join('\n');
+      } else if (question === 14) {
+        return [
+            'def find_k3_part1() -> int:',
+            '    """',
+            '    Trouve 8 bits de k3 (masque 0x3333) en testant :',
+            '        1. Toutes les clés candidates 8 bits',
+            '        2. Pour chaque paire (C, C\') dans pairs-k3_0220_????.txt,',
+            '           vérifie si C⊕k3 et C\'⊕k3 donnent Δ attendu après S-box inverse',
+            '',
+            '    Retourne la clé avec le plus de succès',
+            '    """',
+            '',
+            '',
+            'def find_k3_part2() -> int:',
+            '    """',
+            '    Trouve 8 bits de k3 (masque 0xCCCC) en testant :',
+            '        1. Toutes les clés candidates 8 bits',
+            '        2. Pour chaque paire (C, C\') dans pairs-k3_1010_????.txt,',
+            '           vérifie si C⊕k3 et C\'⊕k3 donnent Δ attendu après S-box inverse',
+            '',
+            '    Retourne la clé avec le plus de succès',
+            '    """'
+        ].join('\n');
+      } else if (question === 15) {
+        return [
+            'def find_k2() -> int:',
+            '    """',
+            '    Trouve k2 complet (16 bits) en testant :',
+            '        1. Toutes les clés candidates 16 bits',
+            '        2. Pour un couple (M, C) connu, vérifie la cohérence du chiffrement',
+            '',
+            '    Retourne la clé validant le chiffrement',
+            '    """',
+            '',
+            '',
+            'def find_k1(k2: int, known_pair: tuple[int, int]) -> int:',
+            '    """',
+            '    Trouve k1 (16 bits) après avoir obtenu k2 :',
+            '        1. Utilise le couple (M, C) connu',
+            '        2. Calcule k1 en inversant le chiffrement avec k2 déjà trouvé',
+            '',
+            '    Retourne la clé k1 complète',
+            '    """'
+        ].join('\n');
+      }
+      return '';
+    }
+    
+    async function submitCode(questionId) {
+      const code = editors[`q${questionId}`].getValue();
+      const blob = new Blob([code], { type: 'text/plain' });
+      const formData = new FormData();
+      formData.append("code", blob, `question${questionId}.py`);
+
+      const response = await fetch(`/submit_code/${questionId}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      const outputDiv = document.getElementById(`output-q${questionId}`);
+
+      if (result.error) {
+        outputDiv.innerHTML = `<pre class="error">${result.error}\n${result.details}</pre>`;
+      } else {
+        let html = `<pre>[Soumission OK]\n${result.message}\n${result.details}`;
+        if (result.stdout) html += `\n\n[Résultat]\n${result.stdout}`;
+        if (result.stderr) html += `\n\n[Erreur]\n${result.stderr}`;
+        html += `</pre>`;
+        outputDiv.innerHTML = html;
+
+        if (questionId === 4) {
+          fillProbabilityTable();
+        }
+      }
+    }
+
+    async function fillProbabilityTable() {
+      const response = await fetch('/get_probas');
+      const data = await response.json();
+
+      const rows = document.querySelectorAll("#editable-table tr");
+
+      for (let i = 2; i < rows.length; i++) {
+        const inputs = rows[i].querySelectorAll("input");
+        const delta_in = i - 2;
+        for (let j = 0; j < 16; j++) {
+          inputs[j].value = data[delta_in][j];
+        }
+      }
+    }
+
+    function validateInput(questionId, side = "default") {
+        let data = {};
+        
+        // Gestion spécifique pour chaque question
+        if (questionId === 5) {
+            // Logique existante pour la Q5 (tableau)
+            const inputs = document.querySelectorAll(`#table_2 input`);
+            data.deltaOut = {};
+            data.proba = {};
+            
+            inputs.forEach((input, index) => {
+                if (index < 16) {
+                    data.deltaOut[`val${index}`] = input.value.trim().toUpperCase();
+                } else {
+                    data.proba[`val${index-16}`] = input.value.trim();
+                }
+            });
+        } 
+        else if ([6, 7, 10, 11].includes(questionId)) {
+            const table = document.getElementById(`question-${questionId}-table`);
+            const proba = document.getElementById(`question-${questionId}-proba`);
+            const inputsTable = table ? Array.from(table.querySelectorAll('input')) : [];
+            const inputsProba = proba ? Array.from(proba.querySelectorAll('input')) : [];
+            const allInputs = [...inputsTable, ...inputsProba];
+
+            allInputs.forEach((input, index) => {
+                data[`val${index}`] = input.value.trim().toUpperCase();
+            });
+        }
+        else if (questionId === 13) {
+          const table = document.getElementById(`question-${questionId}-${side}-table`);
+          const proba = document.getElementById(`question-${questionId}-${side}-proba`);
+          const inputsTable = table ? Array.from(table.querySelectorAll('input')) : [];
+          const inputsProba = proba ? Array.from(proba.querySelectorAll('input')) : [];
+          const allInputs = [...inputsTable, ...inputsProba];
+
+          allInputs.forEach((input, index) => {
+              data[`val${index}`] = input.value.trim().toUpperCase();
+          });
+        }
+
+        const resultDiv = document.getElementById(`result-${questionId}${side !== 'default' ? '-' + side : ''}`);
+        resultDiv.innerHTML = '<i>Validation en cours...</i>';
+
+        fetch(`/validate_input/${questionId}/${side}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur réseau');
+            return response.json();
+        })
+        .then(result => {
+            resultDiv.innerHTML = result.message;
+            resultDiv.className = result.result === "success" ? "success-message" : "error-message";
+            
+            if (result.details) {
+                highlightErrors(questionId, result.details, side);
+            }
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `Erreur: ${error.message}`;
+            resultDiv.className = "error-message";
+        });
+    }
+
+    function highlightErrors(questionId, errorDetails, side) {
+        // Implémentation spécifique selon la question
+        if (questionId === 5) {
+            errorDetails.forEach(error => {
+                const input = document.querySelector(`#table_2 input:nth-child(${error.index + 1})`);
+                if (input) input.style.backgroundColor = "#ffdddd";
+            });
+        } 
+        else if ([6, 7, 10, 11].includes(questionId)) {
+            const table = document.querySelector(`#question-${questionId} table`);
+            errorDetails.forEach(error => {
+                const index = parseInt(error.field.replace('val', ''));
+                const input = table.querySelectorAll('input')[index];
+                if (input) input.style.backgroundColor = "#ffdddd";
+            });
+        }
+        else if (questionId === 13) {
+            const sideDiv = (side === 'left') ? 
+                document.querySelector('#question-13 > div:first-child') : 
+                document.querySelector('#question-13 > div:last-child');
+                
+            errorDetails.forEach(error => {
+                const index = parseInt(error.field.replace('val', ''));
+                const input = sideDiv.querySelectorAll('input')[index];
+                if (input) input.style.backgroundColor = "#ffdddd";
+            });
+        }
+    }
+  </script>
+</head>
+
+</html>
+
+  <body>
+    <h1 style="text-align: center;">Cryptanalyse d'un blockcipher minimaliste</h1>
+
+    <section id="Introduction">
+        <h2>Introduction</h2>
+        <p>
+          L'objectif de ce TP est d'étudier une primitive de chiffrement par bloc (blockcipher) minimaliste, nommée MiniCipher. Cette primitive est minimaliste car 
+          elle manipule des blocs de 16 bits avec des clés de 80 bits. Cependant, il est possible d'étendre MiniCipher pour ressembler à un vrai blockcipher. 
+          L'attaque par cryptanalyse différentielle proposée ici présente les techniques de base utilisées pour casser des cryptosystèmes réels.<br><br>
+          Le TP se décompose en trois grandes parties :
+        <ul>
+          <li>la première consiste en l'écriture d'une version correcte du chiffrement et du déchiffrement d'un message par la primitive MiniCipher;</li>
+          <li>la seconde a pour but de mettre en place une attaque par cryptanalyse différentielle, et permet de retrouver la dernière sous-clé;</li>
+          <li>enfin, la troisième décrira les attaques par cryptanalyse différentielle permettant de récupérer les autres bits de la clé.</li>
+        </ul>
+          Il existe deux implémentations du TP : une en C, l'autre en Python. Il s'agit d'implémentations à trous, pour vous faire gagner du temps.<br>
+          Ce TP est inspiré du document A Tutorial on Linear and Differential Cryptanalysis, écrit par Howard M. Heys, qui est disponible sur le site du cours.<br>
+          En cas de problème de compréhension des questions, n'hésitez pas à demander des éclaircissements aux responsables de ce TP.
+        </p>
+    </section>
+
+    <section id="2. Présentation de MiniCipher">
+      <h2>2. Présentation de MiniCipher</h2>
+      <h3>2.1 Notations</h3>
+      <p>
+        Dans tout le texte, nous noterons les bits à partir de zéro. Ainsi, un mot de 16 bits sera composé des bits 0 (le bit de poids le plus faible) à 15 (le bit de 
+        poids le plus fort).<br>
+        Le XOR (eXclusive OR, ou exclusif en français) est noté par un ⊕, et correspond à l'addition bit à bit modulo 2 : 6 ⊕ 5 = 110b ⊕ 101b = 011b = 3.
+      </p>
+      <h3>2.2 Conception</h3>
+      <p>
+        Le schéma de MiniCipher est assez classique, et repose sur une succession de 4 étapes. Les trois premières étapes consistent en l'application d'une sous-clé 
+        d'étape, d'une application des 4 S-boxes, et d'une permutation. La quatrième étape est identique aux précédentes, la permutation en moins. Enfin, la primitive 
+        se termine par l'ajout d'une cinquième et dernière sous-clé.<br>
+        La figure 1 récapitule ce schéma.
+      </p>
+      <h3>2.3 Utilisation</h3>
+      <p>
+        Pour faire fonctionner cette fonction de blockcipher, il faut 80 bits de clés (pour obtenir 5 sous-clés d'étapes de 16 bits). Après, chaque application de la 
+        primitive, en chiffrement ou en déchiffrement, prend en entrée 16 bits et sort 16 bits.<br>
+        Si l'on souhaite chiffrer plus de deux octets, il suffit d'employer un mode de chiffrement, comme CBC (Cipher-Block Chaining) afinn d'éclater l'entrée à 
+        chiffrer en blocs de 2 octets.
+      </p>
+    </section>
+
+    <section id="3. Première partie : Chiffrement et déchiffrement">
+      <h2>3. Première partie : Chiffrement et déchiffrement</h2>
+      <h3>Récupération de l'archive</h3>
+      <p>
+        Commencez par télécharger l'archive contenant l'ensemble des fichiers nécessaires à la réalisation de ce TP: <a href="/download/Archive.zip" download>Archive.zip</a></li>
+        <ul>
+          <li>Les fichiers minicipher.c et minicipher.py sont les textes à trous, en C et en Python, concernant l'écriture de MiniCipher.</li>
+          <li>Les fichiers minicipher.h et minicipher-main.c complètent les sources en C. Le fichier minicipher-main.py complète les sources en Python.</li>
+          <li>Le Makefile permet de compiler vos programmes. Si vous choisissez le langage C, il vous faudra taper make c, qui produira un exécutable minicipher. À 
+            l'inverse, si vous choisissez Python, make python, minicipher sera un lien symbolique vers le programme Python.</li>
+          <li>En plus des fichiers ci-dessus, vous trouverez trois scripts, test-encryption.sh, test-decryption.sh, test-identity.sh. Ils prennent en paramètre un 
+            label. Il existe un label, 0, pour lequel les résultats des scripts vous sont fournis. Il s'agit des fichiers test-encryption.0.out, test-decryption.0.out, 
+            test-identity.0.out. Ils vous permettent de tester vos programme, en comparant la sortie de ./test-XXX.sh 0 avec le fichier test-XXX.0.out.
+          <li>Les fichiers sources proposent une fonction main qui, une fois les trous comblés, permet de chiffrer et de déchiffrer des documents avec MiniCipher selon 
+            la ligne de commande suivante :
+          <span style="display: block; text-align: center;">./minicipher [-b] [-e|-d] [-1|-M] [-k key ] [-i iv ]</span>
+          où l'on peut choisir le sens de fonctionnement (-e pour le chiffrement, et -d pour le déchiffrement), le mode et la clé (avec -k key où key correspond à 20 
+          caractères hexadécimaux représentant les 80 bits de clé à utiliser). Pour le mode, il faut choisir entre chiffrer un unique bloc (16 bits) avec -1, ou une 
+          entrée quelconque en utilisant le mode CBC avec remplissage (padding), avec -M. De plus, l'option -b permet de considérer des contenus binaires et pas 
+          seulement des chaînes de caractères héxadécimaux. Enfin, lorsque le mode CBC est utilisé, l'IV peut être précisé avec -i.</li>
+        </ul>
+      </p>
+      <h3>Description de MiniCipher</h3>
+      <p>Dans le schéma de la figure 1, voici les détails qui permettent de compléter la description :</p>
+      <ul>
+        <li>la clé utilisée par le blockcipher compte 80 bits, c'est-à-dire 5 sous-clés de 16 bits ;</li>
+        <li>toutes les boîtes marquées S sur le schéma correspondent toutes à la même S-Box, décrite à la figure 3 ;</li>
+        <li>la permutation qui intervient dans les trois premiers tours, et qui mélange les "fils" (correspondant aux 16 bits du mot manipulé), est décrite à la 
+          figure 4 ; cette permutation apparaît explicitement sur le schéma de la figure 2.</li>
+      </ul>
+    <h3>Au travail</h3>
+
+    <div class="question">
+      <h3>Question 1</h3>
+      <p>
+        À l'aide des briques de bases qui vous sont données au début du fichier (définitions de la S-Box s et de la permutation perm), écrivez la fonction 
+        encrypt_round qui calcule une étape (un round ) du blockcipher.<br><br>
+        On rappelle qu'une étape de chiffrement consiste en la succession des étapes suivantes :
+        <ul>
+          <li>ajout (au sens XOR) de la sous-clé d'étape (donnée par le paramètre key );</li>
+          <li>application des S-Boxes sur chacun des quatre quartets du mot de 16 bits;</li>
+          <li>s'il ne s'agit pas du dernier tour, application de la permutation.</li>
+        </ul>
+      </p>
+      <div id="editor-container-q1" style="height: 300px; border: 1px solid #ccc;"></div>
+      <div class="action-buttons">
+          <button onclick="submitCode(1)">Soumettre</button>
+      </div>
+      <div id="output-q1" style="margin-top: 20px;"></div> 
+    </div>
+
+    <div class="question">
+      <h3>Question 2</h3>
+      <p>
+          Ecrivez la fonction encrypt qui réalise le calcul complet du chiffrement par MiniCipher.<br><br>
+          Le chiffrement complet d'un bloc se déroule en 4 étapes (la dernière ne faisant pas intervenir de permutation), suivi de l'ajout (au sens XOR) de la 
+          dernière sous-clé.<br><br>
+          Si vous souhaitez ici vérifier votre implémentation à l'aide de scripts, vous pouvez appeler le script de test avec le paramètre 0, à l'aide de la commande 
+          ./test-encryption.sh 0. Vous pourrez alors comparer votre résultat au fichier test-encryption.0.out.
+      </p>
+      <div id="editor-container-q2" style="height: 300px; border: 1px solid #ccc;"></div>
+      <div class="action-buttons">
+          <button onclick="submitCode(2)">Soumettre</button>
+      </div>
+      <div id="output-q2" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="question">
+      <h3>Question 3</h3>
+      <p>
+        Ecrivez la fonction decrypt qui réalise le calcul complet du déchiffrement. Pour cela, vous réaliserez les fonctions suivantes :
+      </p>
+      <ul>
+          <li>init_inverse_ops qui remplit les tableaux décrivant les inverses des permutations et S-Boxes;</li>
+          <li>decrypt_round qui code le déchiffrement d'un round</li>
+          <li>decrypt qui code le déchiffrement complet.</li>
+      </ul>
+      <p>
+        De la même manière que pour le chiffrement, vous pourrez tester votre implémentation en comparant la sortie du script ./test-decryption.sh 0 avec le fichier 
+        test-decryption.0.out.<br><br>
+        Enfin, vous pouvez faire des tests de chiffrement / déchiffrement à l'aide de ./test-identity.sh 0.
+      </p>
+      <div id="editor-container-q3" style="height: 300px; border: 1px solid #ccc;"></div>
+      <div class="action-buttons">
+          <button onclick="submitCode(3)">Soumettre</button>
+      </div>
+      <div id="output-q3" style="margin-top: 20px;"></div>
+    </div>
+    </section>
+
+    <section id="4. Seconde partie : cryptanalyse de la dernière sous-clé">
+      <h2>4. Seconde partie : cryptanalyse de la dernière sous-clé</h2>
+      <p>L'objectif de cette partie est de mettre en évidence un chemin différentiel.</p>
+      <h3>Étude statistique des S-Boxes</h3>
+      <p>
+        La première chose à faire pour trouver un chemin différentiel est de s'intéresser aux propriétés de la S-Box.<br><br>
+        Soit x ∈ [0..15]. On s'intéresse à la probabilité qu'une différence (au sens XOR) δin sur x implique une différence δout sur S(x), i.e. P (δin ⇒ δout) = 
+        Px∈[0..15] [S(x) ⊕ S(x ⊕ δin) = δout]
+      </p>
+        <div class="question">
+          <h3>Question 4</h3>
+          <p>
+            Etablissez le tableau des probabilités P (δin ⇒ δout) pour toutes les valeurs de δin et δout.<br><br>
+            Il est bien entendu conseillé de calculer ce tableau avec quelques lignes de code. Pour cela, vous pourrez utiliser les squelettes donnés dans le 
+            répertoire part2.
+          </p>
+          <div id="editor-container-q4" style="height: 300px; border: 1px solid #ccc;"></div>
+          <div class="action-buttons">
+              <button onclick="submitCode(4)">Soumettre</button>
+          </div>
+          <div id="output-q4" style="margin-top: 20px;"></div>
+          <table id="table_1" style="border-collapse: collapse; margin: 0 auto;">
+            <!-- Le tableau sera généré en JavaScript -->
+          </table>
+          <script>
+            const table_1 = document.getElementById("table_1");
+            const cellSize_1 = "30px";
+          
+            // Ligne 0 : coin vide + "δout"
+            const titleRow = document.createElement("tr");
+          
+            const topLeftCorner = document.createElement("th");
+            topLeftCorner.setAttribute("rowspan", "2");
+            topLeftCorner.setAttribute("colspan", "2");
+            topLeftCorner.style.border = "none";
+            titleRow.appendChild(topLeftCorner);
+          
+            const deltaOutHeader = document.createElement("th");
+            deltaOutHeader.setAttribute("colspan", "16");
+            deltaOutHeader.textContent = "δout";
+            deltaOutHeader.style.border = "1px solid #999";
+            deltaOutHeader.style.height = cellSize_1;
+            deltaOutHeader.style.backgroundColor = "#eee";
+            titleRow.appendChild(deltaOutHeader);
+          
+            table_1.appendChild(titleRow);
+          
+            // Ligne 1 : entêtes δout (0 à F)
+            const headerRow = document.createElement("tr");
+            for (let col = 0; col < 16; col++) {
+              const th = document.createElement("th");
+              th.textContent = col.toString(16).toUpperCase();
+              th.style.border = "1px solid #999";
+              th.style.width = cellSize_1;
+              th.style.height = cellSize_1;
+              th.style.backgroundColor = "#eee";
+              th.style.textAlign = "center";
+              headerRow.appendChild(th);
+            }
+            table_1.appendChild(headerRow);
+          
+            // Lignes suivantes : δin + données
+            for (let row = 0; row < 16; row++) {
+              const tr = document.createElement("tr");
+          
+              if (row === 0) {
+                // Ajoute la colonne "δin" fusionnée verticalement
+                const deltaInHeader = document.createElement("th");
+                deltaInHeader.setAttribute("rowspan", "16");
+                deltaInHeader.textContent = "δin";
+                deltaInHeader.style.border = "1px solid #999";
+                deltaInHeader.style.width = cellSize_1;
+                deltaInHeader.style.backgroundColor = "#eee";
+                deltaInHeader.style.writingMode = "vertical-rl";
+                deltaInHeader.style.textAlign = "center";
+                deltaInHeader.style.verticalAlign = "middle";
+                deltaInHeader.style.padding = "4px";
+                tr.appendChild(deltaInHeader);
+              }
+          
+              // Entête ligne δin
+              const rowHeader = document.createElement("th");
+              rowHeader.textContent = row.toString(16).toUpperCase();
+              rowHeader.style.border = "1px solid #999";
+              rowHeader.style.width = cellSize_1;
+              rowHeader.style.height = cellSize_1;
+              rowHeader.style.backgroundColor = "#eee";
+              rowHeader.style.textAlign = "center";
+              tr.appendChild(rowHeader);
+          
+              // Cellules éditables (milieu)
+              for (let col = 0; col < 16; col++) {
+                const td = document.createElement("td");
+                const input = document.createElement("input");
+                input.type = "text";
+                input.style.width = cellSize_1;
+                input.style.height = cellSize_1;
+                input.style.textAlign = "center";
+                input.style.border = "none";
+                td.style.border = "1px solid #999";
+                td.style.backgroundColor = "#fff";
+                td.appendChild(input);
+                tr.appendChild(td);
+              }
+          
+              table_1.appendChild(tr);
+            }
+        </script>
+        </div>        
+        <div class="question">
+          <h3>Question 5</h3>
+          <p>
+            En déduire les probabilités les plus intéressantes pour un chemin différentiel, c'est-à-dire les plus grandes.
+          </p>
+          <table id="table_2" style="border-collapse: collapse; margin: 0 auto;">
+            <!-- Le tableau sera généré en JavaScript -->
+          </table>
+          <script>
+            const table_2 = document.getElementById("table_2");
+            const cellWidth_2 = "50px";
+            const cellHeight_2 = "30px";
+
+            // Helper function to create a styled table header cell
+            function createHeaderCell(text) {
+              const th = document.createElement("th");
+              th.textContent = text;
+              th.style.border = "1px solid #999";
+              th.style.width = cellWidth_2;
+              th.style.height = cellHeight_2;
+              th.style.backgroundColor = "#eee";
+              th.style.textAlign = "center";
+              return th;
+            }
+          
+            // Helper function to create a row with input fields
+            function createInputRow(labelText) {
+              const tr = document.createElement("tr");
+              const th = createHeaderCell(labelText);
+              tr.appendChild(th);
+          
+              for (let j = 0; j < 16; j++) {
+                const td = document.createElement("td");
+                const input = document.createElement("input");
+                input.type = "text";
+                input.style.width = cellWidth_2;
+                input.style.height = cellHeight_2;
+                input.style.textAlign = "center";
+                input.style.border = "none";
+                td.style.border = "1px solid #999";
+                td.appendChild(input);
+                tr.appendChild(td);
+              }
+          
+              return tr;
+            }
+          
+            // Create header row
+            const header = document.createElement("tr");
+            const headerLabels = ["δin", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+            headerLabels.forEach(label => {
+              header.appendChild(createHeaderCell(label));
+            });
+            table_2.appendChild(header);
+          
+            // Append δout input row
+            table_2.appendChild(createInputRow("δout"));
+          
+            // Append Proba input row
+            table_2.appendChild(createInputRow("Proba"));
+          </script>
+          <div class="button-container">
+            <button onclick="validateInput(5)">Valider</button>
+          </div>
+          <div id="result-5" class="button-container"></div>        
+        </div>
+      <h3>Etablissement d'un chemin différentiel</h3>
+      <p>
+        On propose de s'intéresser au chemin différentiel suivant :
+      </p>
+      <ul>
+        <li>soit M un mot de 16 bits en entrée du blockcipher;</li>
+        <li>on considère M ′ = M ⊕ 000d;</li>
+        <li>on note cette différence Delta−1 = 000d car il s'agit de la différence avant la première rangée de S-boxes;</li>
+        <li>à la sortie de la première ligne de S-boxes, la différence la plus probable 3 entre le chiffrement de M et le chiffrement de M ′ est Delta+1 = 0001</li>
+        <li>cette différence reste inchangée à travers la permutation et on a donc Delta−2 = 0001 avant le deuxième tour;</li>
+        <li>on s'intéresse ensuite au cas Delta+2 = 000a, là encore le plus intéressant en terme de probabilités;</li>
+        <li>A travers la permutation, Delta+2 devient Delta−3 = 1010;</li>
+        <li>Avec une bonne probabilité, Delta+3 vaut alors a0a0, qui reste inchangé par la permutation et on a donc Delta−4 = a0a0.</li>
+      </ul>
+      <p>
+        Ce chemin différentiel est décrit à la figure 5. On s'intéresse donc à l'exécution de MiniCipher en parallèle sur M et M +000d. Tant que l'on reste sur les 
+        "fils" ou que l'on ajoute les sous-clés, le comportement est linéaire, et la probabilité que tout se passe comme décrit sur la figure est 1. En revanche, il 
+        faut utiliser les probabilités calculées à la question précédente pour connaître le comportement de ce chemin différentiel à travers les S-boxes.
+      </p>
+        <div class="question" id="question-6">
+          <h3>Question 6</h3>
+          <p>
+            En utilisant les probabilités calculées à la question précédente, donnez la probabilité, pour un couple de messages clairs (M, M ′ = M ⊕ 000d) que Delta−4 
+            vaille effectivement a0a0.
+          </p>
+          <table id="question-6-table" style="border-collapse: collapse; margin: 0 auto;">
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999; padding: 6px;">000d</td>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>4</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999;">a0a0</td>
+            </tr>
+          </table>
+  
+          <div style="height: 20px;"></div>
+        
+          <table id="question-6-proba" style="border-collapse: collapse; margin: 0 auto;">
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+            </tr>
+          </table>
+          <div class="button-container">
+            <button onclick="validateInput(6)">Valider</button>
+          </div>
+          <div id="result-6" class="button-container"></div>
+          
+        </div>
+        <div class="question" id="question-7">
+          <h3>Question 7</h3>
+          <p>
+            De la même manière, quelle est la probabilité du chemin différentiel de la figure 6 (Delta−1 = 0b00 ⇒ Delta−4 = 0606) ?
+          </p>
+          <table id="question-7-table" style="border-collapse: collapse; margin: 0 auto;">
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999; padding: 6px;">0b00</td>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>4</sub><sup>−</sup> =</td>
+              <td style="border: 1px solid #999;">0606</td>
+            </tr>
+          </table>
+  
+          <div style="height: 20px;"></div>
+        
+          <table id="question-7-proba" style="border-collapse: collapse; margin: 0 auto;">
+            <tr>
+              <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+              <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+            </tr>
+          </table>
+          
+          <div class="button-container">
+              <button class="validate-button" onclick="validateInput(7)">Valider</button>
+          </div>
+          <div id="result-7" class="result-container"></div>
+        </div>
+      <h3>Récupération du second texte à trous, et des couples de chiffrés</h3>
+      <p>
+        À présent, nous allons utiliser les chemins différentiels précédents pour récupérer la dernière sous-clé k5.<br><br>
+        Prenons par exemple le second chemin différentiel, Delta−1 = 0b00 ⇒ Delta−4 = 0606. Supposons que nous disposions de N couples (C, C′) tels que C = EK (M ) et 
+        C′ = EK (M ⊕ 0b00). Alors, avec une bonne probabilité (p calculée plus haut), nous savons que la différence entre le chiffrement de C et de C′ vaut, juste avant
+         la 4ème rangée de S-Boxes, Delta−4 = 0606. Il s'agit d'un distingueur sur le dernier tour.<br><br>
+        Un premier algorithme pour retrouver k5 serait le suivant :
+      </p>
+      <p>
+        A la fin, la clé k5 valide devrait être celle pour laquelle le rapport [nombre de points]/[nombre de paires (C,C′)] est le plus proche de la probabilité p. Cet 
+        algorithme est illustré par la figure 8.<br><br>
+        En pratique, la bonne sous-clé est celle pour laquelle le nombre de points obtenus est le plus grand, car la probabilité du chemin est assez grande pour que 
+        cela revienne au même.<br><br>
+        Le seul souci de cette méthode, c'est qu'il faut réaliser deux boucles imbriquées, une sur les paires de chiffrés, l'autre sur les clés possibles. Afin de 
+        réduire cette complexité, voici une alternative à l'algorithme ci-dessus, moins précise mais qui fonctionne dans notre cas, si l'on a suffisamment de couples 
+        de chiffrés.<br><br>
+        Au lieu d'inverser l'ajout de k5 et le dernier tour de S-Boxes en entier, on ne va s'intéresser qu'à 2 quartets du mot à la fois : pour le chemin différentiel 
+        0b00 ⇒ 0606, on ne s'intéressera qu'aux bits 0 à 3 et 8 à 11 (masque 0f0f), et pour le chemin différentiel 000d ⇒ a0a0, on ne s'intéressera qu'aux bits 4 à 7 
+        et 12 à 15 (masque f0f0).<br><br>
+        L'algorithme devient donc, pour 0b00 ⇒ 0606, avec un masque 0f0f.
+      </p>
+      <p>
+        On remarque que l'on a inversé les deux boucles, pour des raisons de performances (en effet, le test pour savoir si la sous-clé k est conforme au masque 
+        recherché n'est ainsi effectué qu'une fois pour chaque k).<br><br>
+        La figure 8 décrit l'attaque.
+      </p>
+      <h3>Mise en place de l'attaque</h3>
+      <p>
+        Vous trouverez le matériel cryptographique dans le répertoire crypto-material. Il contient des fichiers comme pairs-k5_0b00_0606.txt qui contient un certain 
+        nombre de lignes, qui correspondent aux paires de chiffrés (C, C′) tels que C = EK (M ) et C′ = EK (M ⊕ 0b00). De même, le fichier pairs-k5_000d_a0a0.txt 
+        contient des paires de chiffrés (C, C′) tels que C = EK (M ) et C′ = EK (M ⊕ 000d).<br><br>
+        En appliquant le deuxième algorithme au masque 0f 0f de la sous-clé dans un premier temps, et au masque f 0f 0 dans un second temps, il est possible de 
+        récupérer la sous-clé k5.
+      </p>
+        <div class="question">
+        <h3>Question 8</h3>
+        <p>
+          Ecrivez le code implémentant l'attaque pour le chemin différentiel 0b00 ⇒ 0606, et déduisez-en 8 bits de la sous-clé k5.<br><br>
+          Afin de vérifier votre travail, des paires supplémentaires ont été générées pour la clé nulle, et sont fournis dans le répertoire crypto-material-null-key.
+        </p>
+        <div id="editor-container-q8" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div class="action-buttons">
+            <button onclick="submitCode(8)">Soumettre</button>
+        </div>
+        <div id="output-q8" style="margin-top: 20px;"></div>     
+        </div>
+        <div class="question">
+          <h3>Question 9</h3>
+          <p>
+            Recopiez le code précédent et adaptez-le pour le chemin différentiel 000d ⇒ a0a0, puis déduisez-en 8 bits de la sous-clé k5.
+          </p>
+          <div id="editor-container-q9" style="height: 300px; border: 1px solid #ccc;"></div>
+          <div class="action-buttons">
+              <button onclick="submitCode(9)">Soumettre</button>
+          </div>
+          <div id="output-q9" style="margin-top: 20px;"></div>         
+        </div>
+    </section>
+
+    <section id="5. Troisième partie : cryptanalyse de la clé complète">
+      <h2>5. Troisième partie : cryptanalyse de la clé complète</h2>
+      <p>
+        Cette partie donne les pistes permettant de retrouver toute la clé correspondant à votre groupe. N'hésitez pas à demander conseil par courrier électronique en 
+        cas de souci.<br>
+        Il s'agit à présent de retrouver, dans l'ordre, les sous-clés k4 et k3, à l'aide du même algorithme que ci-dessus. Ensuite, on récupèrera k2 et k1 par des 
+        méthodes plus simples.
+      </p>
+      <h3>Récupération de la sous-clé 4 et de la sous-clé 3</h3>
+      <p>
+        La figure 5 décrit l'adaptation du second algorithme à la recherche de 8 bits (masque 5555) de la sous-clé k4. En effet, on considère une différentielle de la 
+        forme δ₁⁻ = 0040 ⇒ δ₃⁻ = 0606 et la sortie des S-Boxes 0 et 2 se reflète sur les bits du masque 5555 de la sous-clé k4.
+      </p>
+      <div class="question" id="question-10">
+        <h3>Question 10</h3>
+        <p>
+          Détailler le chemin différentiel δ₁⁻ = 0040 ⇒ δ₃⁻ = 0606 et calculer sa probabilité.
+        </p>
+        <table id="question-10-table" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0040</td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;">0606</td>
+          </tr>
+        </table>
+
+        <div style="height: 20px;"></div>
+      
+        <table id="question-10-proba" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+          </tr>
+        </table>
+        
+        <div class="button-container">
+          <button onclick="validateInput(10)">Valider</button>
+        </div>
+        <div id="result-10" class="button-container"></div>        
+      </div>
+      <div class="question" id="question-11">
+        <h3>Question 11</h3>
+        <p>
+          Détailler de même le chemin différentiel δ₁⁻ = 0005 ⇒ δ₃⁻ = a0a0 et calculer sa probabilité.
+        </p>
+        <table id="question-11-table" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0005</td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;">0a0a</td>
+          </tr>
+        </table>
+
+        <div style="height: 20px;"></div>
+      
+        <table id="question-11-proba" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+          </tr>
+        </table>
+        
+        <div class="button-container">
+          <button onclick="validateInput(11)">Valider</button>
+        </div>
+        <div id="result-11" class="button-container"></div>        
+      </div>
+      <div class="question">
+        <h3>Question 12</h3>
+        <p>
+          En vous inspirant du code précédent, exploitez les chemins précedents pour k4.
+        </p>
+        <div id="editor-container-q12" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div class="action-buttons">
+            <button onclick="submitCode(12)">Soumettre</button>
+        </div>
+        <div id="output-q12" style="margin-top: 20px;"></div>
+      </div>
+      <p>
+        Le répertoire crypto-material contient en particulier des fichiers pairs-* contenant le contenu nécessaire aux attaques de cette partie.
+      </p>
+      <div class="question" id="question-13">
+        <h3>Question 13</h3>
+        <p>
+          Sachant que la sous-clé k3 peut se trouver avec des différentielles similaires à celles utilisées ci-dessous, trouver les 2 chemins différentiels utiles
+          avec δ<sub>1</sub><sup>−</sup> = 0220 puis δ<sub>1</sub><sup>−</sup> = 1010, ainsi que les probabilités de ces chemins.
+        </p>
+      
+        <div style="display: flex; justify-content: center; gap: 300px; margin: 20px auto;">
+          <!-- Bloc gauche : δ₁⁻ = 0220 -->
+          <div style="border: none; padding: 20px; width: max-content;">
+            <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 0220</h3>
+            <table id="question-13-left-table" style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999; padding: 6px;">0220</td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+            </table>
+      
+            <div style="height: 20px;"></div>
+      
+            <table id="question-13-left-proba" style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+              </tr>
+            </table>
+
+            <div class="button-container">
+              <button onclick="validateInput(13, 'left')">Valider</button>
+            </div>
+            <div id="result-13-left" class="button-container"></div>
+          </div>
+      
+          <!-- Bloc droite : δ₁⁻ = 1010 -->
+          <div style="border: none; padding: 20px; width: max-content;">
+            <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 1010</h3>
+            <table id="question-13-right-table" style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999; padding: 6px;">1010</td>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+              </tr>
+            </table>
+      
+            <div style="height: 20px;"></div>
+      
+            <table id="question-13-right-proba" style="border-collapse: collapse; margin: 0 auto;">
+              <tr>
+                <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+                <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+              </tr>
+            </table>
+
+            <div class="button-container">
+              <button onclick="validateInput(13, 'right')">Valider</button>
+            </div>
+            <div id="result-13-right" class="button-container"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="question">
+        <h3>Question 14</h3>
+        <p>
+          À l'aide des chemins différentiels trouvés et des variables intitulées pairs_k3_delta_in_0220 et pairs_k3_delta_in_1010, adaptez le code de calcul de la 
+          sous-clé k4 pour retrouver k3.
+        </p>
+        <div id="editor-container-q14" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div class="action-buttons">
+            <button onclick="submitCode(14)">Soumettre</button>
+        </div>
+        <div id="output-q14" style="margin-top: 20px;"></div>
+      </div>
+      <h3>Récupération des sous-clés 2 et 1</h3>
+      <div class="question">
+        <h3>Question 15</h3>
+        <p>
+          Achevez l'attaque pour trouver k2 et k1.<br>
+          <ul>
+            <li>Pour k2, n'importe quel chemin différentiel a une probabilité de 1. En considérant k2 par morceaux de 8 bits, comme précédemment, il est facile de 
+              retrouver la sous-clé.</li>
+            <li>Enfin, k1 se retrouve à l'aide d'un simple couple clair/chiffré, puisqu'on peut remonter tout le reste de la fonction de déchiffrement.</li>
+          </ul>
+        </p>
+        <div id="editor-container-q15" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div class="action-buttons">
+            <button onclick="submitCode(15)">Soumettre</button>
+        </div>
+        <div id="output-q15" style="margin-top: 20px;"></div>
+      </div>
+      <h3>Déchiffrement du message donné à votre groupe.</h3>
+      <div class="question">
+        <h3>Question 16</h3>
+        <p>
+          Une fois que vous avez retrouvé toute la clé, déchiffrez le message message.xyz présent dans les ressources en mode CBC.
+        </p>
+      </div>
+    </section>
+  </body>
+</html>
