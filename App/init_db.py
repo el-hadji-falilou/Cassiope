@@ -13,7 +13,7 @@ with app.app_context():
         admin = User(
             email='admin@example.com',
             name='Administrateur',
-            hashed_password=generate_password_hash('adminpass'),   # le mot de passe à donner
+            hashed_password=generate_password_hash('adminpass'),
             role=UserRole.teacher
         )
         db.session.add(admin)
