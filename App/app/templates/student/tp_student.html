@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cryptanalyse d'un blockcipher minimaliste - Promo {{ cohort.name }}</title>
+  <title>Cryptanalyse d'un blockcipher minimaliste</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <!-- Ajout de Monaco Editor -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
@@ -160,10 +160,12 @@
         ].join('\n');
       } else if (question === 4) {
         return [
+            '# S-Box Definition',
             's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
             '',
             '# On inverse la S-Box',
             's_inv = [0] * 16',
+            '# À compléter : inverser la S-box (s_inv)',
             '',
             '',
             '# probas doit etre un tableau de tableau, probas[i][j] étant le nombre de fois qu\'on a δout=j sachant que δin=i',
@@ -301,18 +303,18 @@
     }
 
     async function fillProbabilityTable() {
-      const response = await fetch('/get_probas');
-      const data = await response.json();
+        const response = await fetch('/get_probas');
+        const data = await response.json();
 
-      const rows = document.querySelectorAll("#editable-table tr");
+        const rows = document.querySelectorAll("#table_1 tr");
 
-      for (let i = 2; i < rows.length; i++) {
-        const inputs = rows[i].querySelectorAll("input");
-        const delta_in = i - 2;
-        for (let j = 0; j < 16; j++) {
-          inputs[j].value = data[delta_in][j];
+        for (let i = 2; i < rows.length; i++) {
+            const cells = rows[i].querySelectorAll("td");
+            const delta_in = i - 2;
+            for (let j = 0; j < 16; j++) {
+                cells[j].textContent = data[delta_in][j];
+            }
         }
-      }
     }
 
     function validateInput(questionId, side = "default") {
@@ -334,23 +336,26 @@
             });
         } 
         else if ([6, 7, 10, 11].includes(questionId)) {
-            // Questions avec des champs simples
-            const table = document.querySelector(`#question-${questionId} table`);
-            const inputs = table.querySelectorAll('input');
-            inputs.forEach((input, index) => {
+            const table = document.getElementById(`question-${questionId}-table`);
+            const proba = document.getElementById(`question-${questionId}-proba`);
+            const inputsTable = table ? Array.from(table.querySelectorAll('input')) : [];
+            const inputsProba = proba ? Array.from(proba.querySelectorAll('input')) : [];
+            const allInputs = [...inputsTable, ...inputsProba];
+
+            allInputs.forEach((input, index) => {
                 data[`val${index}`] = input.value.trim().toUpperCase();
             });
         }
         else if (questionId === 13) {
-            // Question 13 avec deux côtés
-            const sideDiv = (side === 'left') ? 
-                document.querySelector('#question-13 > div:first-child') : 
-                document.querySelector('#question-13 > div:last-child');
-                
-            const inputs = sideDiv.querySelectorAll('input');
-            inputs.forEach((input, index) => {
-                data[`val${index}`] = input.value.trim().toUpperCase();
-            });
+          const table = document.getElementById(`question-${questionId}-${side}-table`);
+          const proba = document.getElementById(`question-${questionId}-${side}-proba`);
+          const inputsTable = table ? Array.from(table.querySelectorAll('input')) : [];
+          const inputsProba = proba ? Array.from(proba.querySelectorAll('input')) : [];
+          const allInputs = [...inputsTable, ...inputsProba];
+
+          allInputs.forEach((input, index) => {
+              data[`val${index}`] = input.value.trim().toUpperCase();
+          });
         }
 
         const resultDiv = document.getElementById(`result-${questionId}${side !== 'default' ? '-' + side : ''}`);
@@ -413,38 +418,7 @@
 </html>
 
   <body>
-    <header>
-        <h1 style="text-align: center;">Cryptanalyse d'un blockcipher minimaliste</h1>
-        <p class="promo-label">Promo : <b>{{ cohort.name }}</b></p>
-        <p>Bienvenue, {{ user.name }}</p>
-    </header>
-
-    <section>
-        <h3>Matériel cryptographique</h3>
-        <ul>
-        {% for m in materials %}
-            <li>
-                {{ m.filename }}
-                [<a href="{{ url_for('student.download_material', filename=m.filename) }}">Télécharger</a>]
-            </li>
-        {% else %}
-            <li>Aucun fichier de matériel n'a encore été généré.</li>
-        {% endfor %}
-        </ul>
-    </section>
-
-    <!-- Zone Monaco Editor -->
-<section>
-  <h3>Votre code MiniCipher</h3>
-  <div id="monaco-container" style="height:400px;border:1px solid #ccc;"></div>
-  <button id="submit-code-btn">Soumettre le code</button>
-  <pre id="submission-feedback"></pre>
-</section>
-
-<!-- Inclure Monaco Editor via CDN -->
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-<script src="{{ url_for('static', filename='main.js') }}"></script>
-
+    <h1 style="text-align: center;">Cryptanalyse d'un blockcipher minimaliste</h1>
 
     <section id="Introduction">
         <h2>Introduction</h2>
@@ -668,25 +642,22 @@
               rowHeader.style.textAlign = "center";
               tr.appendChild(rowHeader);
           
-              // Cellules éditables (milieu)
+              // Cellules du milieu
               for (let col = 0; col < 16; col++) {
                 const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.style.width = cellSize_1;
-                input.style.height = cellSize_1;
-                input.style.textAlign = "center";
-                input.style.border = "none";
+                td.textContent = "0";
                 td.style.border = "1px solid #999";
+                td.style.width = cellSize_1;
+                td.style.height = cellSize_1;
+                td.style.textAlign = "center";
                 td.style.backgroundColor = "#fff";
-                td.appendChild(input);
                 tr.appendChild(td);
               }
           
               table_1.appendChild(tr);
             }
         </script>
-        </div>        
+        </div>
         <div class="question">
           <h3>Question 5</h3>
           <p>
@@ -749,7 +720,7 @@
             table_2.appendChild(createInputRow("Proba"));
           </script>
           <div class="button-container">
-            <button onclick="validateInput(5)">Valider</button>
+            <button class="validate-button" onclick="validateInput(5)">Valider</button>
           </div>
           <div id="result-5" class="button-container"></div>        
         </div>
@@ -778,7 +749,7 @@
             En utilisant les probabilités calculées à la question précédente, donnez la probabilité, pour un couple de messages clairs (M, M ′ = M ⊕ 000d) que Delta−4 
             vaille effectivement a0a0.
           </p>
-          <table style="border-collapse: collapse; margin: 0 auto;">
+          <table id="question-6-table" style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
               <td style="border: 1px solid #999; padding: 6px;">000d</td>
@@ -805,24 +776,24 @@
   
           <div style="height: 20px;"></div>
         
-          <table style="border-collapse: collapse; margin: 0 auto;">
+          <table id="question-6-proba" style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
               <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
             </tr>
           </table>
+
           <div class="button-container">
-            <button onclick="validateInput(6)">Valider</button>
+            <button class="validate-button" onclick="validateInput(6)">Valider</button>
           </div>
           <div id="result-6" class="button-container"></div>
-          
         </div>
         <div class="question" id="question-7">
           <h3>Question 7</h3>
           <p>
             De la même manière, quelle est la probabilité du chemin différentiel de la figure 6 (Delta−1 = 0b00 ⇒ Delta−4 = 0606) ?
           </p>
-          <table style="border-collapse: collapse; margin: 0 auto;">
+          <table id="question-7-table" style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
               <td style="border: 1px solid #999; padding: 6px;">0b00</td>
@@ -849,7 +820,7 @@
   
           <div style="height: 20px;"></div>
         
-          <table style="border-collapse: collapse; margin: 0 auto;">
+          <table id="question-7-proba" style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
               <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -938,7 +909,7 @@
         <p>
           Détailler le chemin différentiel δ₁⁻ = 0040 ⇒ δ₃⁻ = 0606 et calculer sa probabilité.
         </p>
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-10-table" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
             <td style="border: 1px solid #999; padding: 6px;">0040</td>
@@ -959,7 +930,7 @@
 
         <div style="height: 20px;"></div>
       
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-10-proba" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
             <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -967,7 +938,7 @@
         </table>
         
         <div class="button-container">
-          <button onclick="validateInput(10)">Valider</button>
+          <button class="validate-button" onclick="validateInput(10)">Valider</button>
         </div>
         <div id="result-10" class="button-container"></div>        
       </div>
@@ -976,7 +947,7 @@
         <p>
           Détailler de même le chemin différentiel δ₁⁻ = 0005 ⇒ δ₃⁻ = a0a0 et calculer sa probabilité.
         </p>
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-11-table" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
             <td style="border: 1px solid #999; padding: 6px;">0005</td>
@@ -997,7 +968,7 @@
 
         <div style="height: 20px;"></div>
       
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-11-proba" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
             <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -1005,7 +976,7 @@
         </table>
         
         <div class="button-container">
-          <button onclick="validateInput(11)">Valider</button>
+          <button class="validate-button" onclick="validateInput(11)">Valider</button>
         </div>
         <div id="result-11" class="button-container"></div>        
       </div>
@@ -1034,7 +1005,7 @@
           <!-- Bloc gauche : δ₁⁻ = 0220 -->
           <div style="border: none; padding: 20px; width: max-content;">
             <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 0220</h3>
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-left-table" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
                 <td style="border: 1px solid #999; padding: 6px;">0220</td>
@@ -1049,7 +1020,7 @@
       
             <div style="height: 20px;"></div>
       
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-left-proba" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
                 <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -1057,7 +1028,7 @@
             </table>
 
             <div class="button-container">
-              <button onclick="validateInput(13, 'left')">Valider</button>
+              <button class="validate-button" onclick="validateInput(13, 'left')">Valider</button>
             </div>
             <div id="result-13-left" class="button-container"></div>
           </div>
@@ -1065,7 +1036,7 @@
           <!-- Bloc droite : δ₁⁻ = 1010 -->
           <div style="border: none; padding: 20px; width: max-content;">
             <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 1010</h3>
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-right-table" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
                 <td style="border: 1px solid #999; padding: 6px;">1010</td>
@@ -1080,7 +1051,7 @@
       
             <div style="height: 20px;"></div>
       
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-right-proba" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
                 <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -1088,7 +1059,7 @@
             </table>
 
             <div class="button-container">
-              <button onclick="validateInput(13, 'right')">Valider</button>
+              <button class="validate-button" onclick="validateInput(13, 'right')">Valider</button>
             </div>
             <div id="result-13-right" class="button-container"></div>
           </div>
