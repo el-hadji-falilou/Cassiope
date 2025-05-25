@@ -90,6 +90,14 @@
     function getInitialCode(question) {
       if (question === 1) {
         return [
+            '# S-Box',
+            's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
+            '',
+            '',
+            '# Permutation',
+            'perm = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]',
+            '',
+            '',
             'def encrypt_round(input, key, do_perm):',
             '     """encrypt_round',
             '     Parameters',
@@ -103,13 +111,18 @@
             '     the output value for the round',
             '     """',
             '',
-            '     # Subkey Addition',
             '',
-            '     # S-Box Application',
+            'def encrypt(plaintext, keys):',
+            '     """encrypt',
+            '     Parameters',
+            '     ----------',
+            '     plaintext : input plaintext to encrypt',
+            '     keys      : array containing the 5 subkeys (i.e. the complete key)',
             '',
-            '     # If no permutation is performed, we can return the result early',
-            '',
-            '     # Else, we perform the permutation'
+            '     Output',
+            '     ------',
+            '     the encrypted value',
+            '     """'
         ].join('\n');
       } else if (question === 2) {
         return [
@@ -127,11 +140,14 @@
         ].join('\n');
       } else if (question === 3) {
         return [
-            'def init_inverse_ops():',
-            '     """This function populates  s_inv et perm_inv to make decryption possible.',
-            '     Of course, it should be called BEFORE any decryption operation.',
-            '     """',
+            'global s_inv, perm_inv',
+            's_inv = [0]*16',
+            'perm_inv = [0]*16',
             '',
+            'def init_inverse_ops():',
+            '      """This function populates  s_inv et perm_inv to make decryption possible.',
+            '      Of course, it should be called BEFORE any decryption operation.',
+            '      """',
             '',
             'def decrypt_round(input, key, do_perm):',
             '      """decrypt_round',
@@ -160,27 +176,25 @@
         ].join('\n');
       } else if (question === 4) {
         return [
-            '# S-Box Definition',
+            'global probas, s',
+            '',
+            '# S-Box',
             's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
             '',
-            '# On inverse la S-Box',
+            '# Inverse de la S-Box',
             's_inv = [0] * 16',
-            '# À compléter : inverser la S-box (s_inv)',
             '',
-            '',
-            '# probas doit etre un tableau de tableau, probas[i][j] étant le nombre de fois qu\'on a δout=j sachant que δin=i',
+            '# probas[i][j] est le nombre de fois qu\'on a δout=j sachant que δin=i',
             'probas = [[0 for _ in range(16)] for _ in range(16)]',
-            '',
             '',
             '# On calcule le tableau des probas',
             'def compute_probas():',
-            '     global probas, s'
+            '',
         ].join('\n');
       } else if (question === 8) {
         return [
             's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
             '# À compléter : inverser la S-box (s_inv)',
-            '',
             '',
             'def find_k5_part1() -> int:',
             '     """',
@@ -506,7 +520,7 @@
           <li>s'il ne s'agit pas du dernier tour, application de la permutation.</li>
         </ul>
       </p>
-      <div id="editor-container-q1" style="height: 300px; border: 1px solid #ccc;"></div>
+      <div id="editor-container-q1" style="height: 650px; border: 1px solid #ccc;"></div>
       <div class="action-buttons">
           <button onclick="submitCode(1)">Soumettre</button>
       </div>
@@ -544,7 +558,7 @@
         test-decryption.0.out.<br><br>
         Enfin, vous pouvez faire des tests de chiffrement / déchiffrement à l'aide de ./test-identity.sh 0.
       </p>
-      <div id="editor-container-q3" style="height: 300px; border: 1px solid #ccc;"></div>
+      <div id="editor-container-q3" style="height: 640px; border: 1px solid #ccc;"></div>
       <div class="action-buttons">
           <button onclick="submitCode(3)">Soumettre</button>
       </div>

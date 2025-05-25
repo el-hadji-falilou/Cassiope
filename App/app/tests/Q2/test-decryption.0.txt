@@ -1,5 +1,5 @@
 Checking basic decryption (a 16-bit word)
-d42a, 962
+d42a, 9628
 8b3c, a5d9
 584a, f2d1
 e367, 93a5

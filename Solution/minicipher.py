@@ -52,12 +52,6 @@ def encrypt_round(input, key, do_perm):
     return temp_perm
 
 
-    # If no permutation is performed, we can return the result early
-
-    # Else, we perform the permutation
-
-
-
 # Complete Encryption (TODO)
 def encrypt(plaintext, keys):
     """encrypt
@@ -81,7 +75,6 @@ def encrypt(plaintext, keys):
     temp ^= keys[4]
 
     return temp
-
 
 
 ##############

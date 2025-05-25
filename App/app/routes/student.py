@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import json
+import shutil
 import importlib.util
 
 from app.models import Cohort, CryptoMaterial, UserRole
@@ -39,18 +40,23 @@ def download_material(filename):
 @student_bp.route("/submit_code/<int:question_id>", methods=["POST"])
 @login_required
 def submit_code(question_id):
-    if getattr(current_user, 'role', None) != UserRole.student:
-        return jsonify({'success': False, 'message': 'Non autorisé.'}), 403
+    print(f"[DEBUG] Handling submission for question {question_id}")
 
     if "code" not in request.files:
+        print("[DEBUG] No code in request.files")
         return jsonify({"error": "No file received"}), 400
 
     file = request.files["code"]
+    print(f"[DEBUG] Received file: {file.filename}")
+
     if file.filename == "":
         return jsonify({"error": "Invalid filename"}), 400
 
     new_code = file.read().decode('utf-8')
+    print(f"[DEBUG] New code content:\n{new_code[:200]}...")
+
     update_status = update_file(question_id, new_code)
+    print(f"[DEBUG] update_status = {update_status}")
 
     if not update_status["success"]:
         return jsonify({
@@ -58,27 +64,158 @@ def submit_code(question_id):
             "details": update_status["message"]
         }), 500
 
-    try:
-        make_process = subprocess.run(
-            ["make", "python"],
-            check=True,
-            cwd=current_app.config['SUBMISSIONS_FOLDER'],
+    make_process = subprocess.run(
+        ["make", "python"],
+        check=True,
+        cwd=current_app.config['SUBMISSIONS_FOLDER'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    print(f"[DEBUG] Make output:\n{make_process.stdout}")
+
+    if question_id == 1:
+        print("[DEBUG] Running Docker for Q1")
+
+        required_files = [
+            ('minicipher', 'minicipher'),
+            ('minicipher.py', 'minicipher.py'),
+            ('minicipher-main.py', 'minicipher-main.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TESTS_FOLDER_Q1'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "minicipher-test-1", "."],
+            cwd=current_app.config['TESTS_FOLDER_Q1'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
         )
-    except subprocess.CalledProcessError as e:
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "minicipher-test-1"],
+            cwd=current_app.config['TESTS_FOLDER_Q1'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
         return jsonify({
-            "error": "Make failed",
-            "details": e.stderr
-        }), 500
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
+
+    if question_id == 3:
+        print("[DEBUG] Running Docker for Q3")
+
+        required_files = [
+            ('minicipher', 'minicipher'),
+            ('minicipher.py', 'minicipher.py'),
+            ('minicipher-main.py', 'minicipher-main.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TESTS_FOLDER_Q3'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "minicipher-test-3", "."],
+            cwd=current_app.config['TESTS_FOLDER_Q3'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "minicipher-test-3"],
+            cwd=current_app.config['TESTS_FOLDER_Q3'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        return jsonify({
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
 
     return jsonify({
-        "message": "Code submitted and tested successfully.",
-        "details": update_status["message"],
-        "stdout": f"Test exécuté pour la question {question_id} après mise à jour.",
-        "stderr": ""
-    }), 200
+        "status": "SUCCESS",
+        "message": "Test submitted"
+    })
+
+def update_file(question_id, new_code):
+    markers = {
+        1: ("##### START_QUESTION_1 #####", "##### END_QUESTION_1 #####"),
+        2: ("##### START_QUESTION_2 #####", "##### END_QUESTION_2 #####"),
+        3: ("##### START_QUESTION_3 #####", "##### END_QUESTION_3 #####"),
+        4: ("##### START_QUESTION_4 #####", "##### END_QUESTION_4 #####"),
+        8: ("##### START_QUESTION_8 #####", "##### END_QUESTION_8 #####"),
+        9: ("##### START_QUESTION_9 #####", "##### END_QUESTION_9 #####"),
+        12: ("##### START_QUESTION_12 #####", "##### END_QUESTION_12 #####"),
+        14: ("##### START_QUESTION_14 #####", "##### END_QUESTION_14 #####"),
+        15: ("##### START_QUESTION_15 #####", "##### END_QUESTION_15 #####")
+    }
+
+    if question_id in {1, 2, 3}:
+        PATH = MINICIPHER_PATH
+    elif question_id == 4:
+        PATH = COMPUTE_PROBAS_PATH
+    elif question_id in {8, 9, 12, 14, 15}:
+        PATH = FIND_KEY
+    else:
+        return {"success": False, "message": "Invalid question ID"}
+
+    with open(PATH, 'r') as f:
+        content = f.read()
+
+    start_marker, end_marker = markers[question_id]
+    pattern = re.compile(
+        rf"{re.escape(start_marker)}(.*?){re.escape(end_marker)}",
+        flags=re.DOTALL
+    )
+
+    if not pattern.search(content):
+        return {"success": False, "message": "Markers not found"}
+
+    replacement = f"{start_marker}\n{new_code.strip()}\n{end_marker}"
+    content = pattern.sub(replacement, content)
+
+    with open(PATH, 'w') as f:
+        f.write(content)
+
+    return {"success": True, "message": f"Updated code for question {question_id}"}
 
 @student_bp.route("/get_probas", methods=["GET"])
 @login_required
@@ -266,45 +403,3 @@ def validate_input(question_id, side):
                 "message": "Réponses correctes",
                 "details": errors
             })
-
-def update_file(question_id, new_code):
-    markers = {
-        1: ("##### START_QUESTION_1 #####", "##### END_QUESTION_1 #####"),
-        2: ("##### START_QUESTION_2 #####", "##### END_QUESTION_2 #####"),
-        3: ("##### START_QUESTION_3 #####", "##### END_QUESTION_3 #####"),
-        4: ("##### START_QUESTION_4 #####", "##### END_QUESTION_4 #####"),
-        8: ("##### START_QUESTION_8 #####", "##### END_QUESTION_8 #####"),
-        9: ("##### START_QUESTION_9 #####", "##### END_QUESTION_9 #####"),
-        12: ("##### START_QUESTION_12 #####", "##### END_QUESTION_12 #####"),
-        14: ("##### START_QUESTION_14 #####", "##### END_QUESTION_14 #####"),
-        15: ("##### START_QUESTION_15 #####", "##### END_QUESTION_15 #####")
-    }
-
-    if question_id in {1, 2, 3}:
-        PATH = MINICIPHER_PATH
-    elif question_id == 4:
-        PATH = COMPUTE_PROBAS_PATH
-    elif question_id in {8, 9, 12, 14, 15}:
-        PATH = FIND_KEY
-    else:
-        return {"success": False, "message": "Invalid question ID"}
-
-    with open(PATH, 'r') as f:
-        content = f.read()
-
-    start_marker, end_marker = markers[question_id]
-    pattern = re.compile(
-        rf"{re.escape(start_marker)}(.*?){re.escape(end_marker)}",
-        flags=re.DOTALL
-    )
-
-    if not pattern.search(content):
-        return {"success": False, "message": "Markers not found"}
-
-    replacement = f"{start_marker}\n{new_code.strip()}\n{end_marker}"
-    content = pattern.sub(replacement, content)
-
-    with open(PATH, 'w') as f:
-        f.write(content)
-
-    return {"success": True, "message": f"Updated code for question {question_id}"}

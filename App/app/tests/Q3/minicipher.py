@@ -8,15 +8,19 @@
 ##############
 
 
-##### START_QUESTION_1 #####
-# S-Box
+# S-Box Definition
 s = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]
 
 
-# Permutation
+# Permutation Definition
 perm = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
 
+global s_inv, perm_inv
+s_inv = [0]*16
+perm_inv = [0]*16
 
+
+##### START_QUESTION_1 #####
 def encrypt_round(input, key, do_perm):
      """encrypt_round
      Parameters
@@ -29,6 +33,15 @@ def encrypt_round(input, key, do_perm):
      ------
      the output value for the round
      """
+
+     # Subkey Addition
+
+     # S-Box Application
+
+     # If no permutation is performed, we can return the result early
+
+     # Else, we perform the permutation
+
      # Étape 1 : Ou exclusif avec la sous-clé (XOR)
      temp = input ^ key
 
@@ -50,30 +63,6 @@ def encrypt_round(input, key, do_perm):
           temp_perm |= (bit << perm[i])  # Placement à la position permutée
 
      return temp_perm
-
-
-def encrypt(plaintext, keys):
-     """encrypt
-     Parameters
-     ----------
-     plaintext : input plaintext to encrypt
-     keys      : array containing the 5 subkeys (i.e. the complete key)
-
-     Output
-     ------
-     the encrypted value
-     """
-     # Initialisation de la variable temporaire
-     temp = plaintext
-
-     # 4 tours de chiffrement (les 3 premiers avec permutation, le dernier sans permutation)
-     for i in range(4):
-          temp = encrypt_round(temp, keys[i], do_perm=(i < 3))
-
-     # Ajout de la dernière sous-clé après les 4 rounds
-     temp ^= keys[4]
-
-     return temp
 ##### END_QUESTION_1 #####
 
 
@@ -88,8 +77,7 @@ def encrypt(plaintext, keys):
      Output
      ------
      the encrypted value
-     """
-     # Initialisation de la variable temporaire
+     """    # Initialisation de la variable temporaire
      temp = plaintext
 
      # 4 tours de chiffrement (les 3 premiers avec permutation, le dernier sans permutation)
@@ -104,37 +92,69 @@ def encrypt(plaintext, keys):
 
 
 ##### START_QUESTION_3 #####
-global s_inv, perm_inv
-s_inv = [0]*16
-perm_inv = [0]*16
-
 def init_inverse_ops():
-      """This function populates  s_inv et perm_inv to make decryption possible.
-      Of course, it should be called BEFORE any decryption operation.
-      """
+     """This function populates  s_inv et perm_inv to make decryption possible.
+     Of course, it should be called BEFORE any decryption operation.
+     """
+    
+     # Calcul de l'inverse de la S-Box
+     for i in range(16):
+          s_inv[s[i]] = i
+     
+     # Calcul de l'inverse de la permutation
+     for i in range(16):
+          perm_inv[perm[i]] = i
+
 
 def decrypt_round(input, key, do_perm):
-      """decrypt_round
-      Parameters
-      ----------
-      input   : the ciphertext block to decrypt
-      key     : round subkey
-      do_perm : if True, perform the permutation
+     """decrypt_round
+     Parameters
+     ----------
+     input   : the ciphertext block to decrypt
+     key     : round subkey
+     do_perm : if True, perform the permutation
 
-      Output
-      ------
-      The decrypted plaintext value
-      """
+     Output
+     ------
+     The decrypted plaintext value
+     """
+     if do_perm:
+          perm_output = 0
+          for i in range(16):
+               perm_output |= ((input >> i) & 0x1) << perm_inv[i]
+          input = perm_output
+     
+     # Application des S-Boxes inverses sur chaque quartet
+     output = ((s_inv[(input >> 12) & 0xF] )<< 12) | \
+               ((s_inv[(input >> 8) & 0xF]) << 8) | \
+               ((s_inv[(input >> 4) & 0xF]) << 4) | \
+               (s_inv[input & 0xF])
+     
+     # Ajout de la sous-clé (XOR)
+     output ^= key
+
+     return output
 
 def decrypt(ciphertext, keys):
-      """decrypt
-      Parameters
-      ----------
-      ciphertext : ciphertext to decrypt
-      keys       : array containing the 5 subkeys (i.e. the complete key)
+     """decrypt
+     Parameters
+     ----------
+     ciphertext : ciphertext to decrypt
+     keys       : array containing the 5 subkeys (i.e. the complete key)
 
-      Output
-      ------
-      The decrypted plaintext
-      """
+     Output
+     ------
+     The decrypted plaintext
+     """
+     # Initialisation de l'état avec le texte chiffré
+     state = ciphertext
+     
+     # Ajout de la dernière sous-clé
+     state ^= keys[4]
+     
+     # 4 tours de déchiffrement
+     for i in range(3, -1, -1):
+          state = decrypt_round(state, keys[i], i < 3)  # Pas de permutation au dernier tour
+     
+     return state
 ##### END_QUESTION_3 #####
