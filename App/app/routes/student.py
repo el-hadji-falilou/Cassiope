@@ -85,13 +85,13 @@ def submit_code(question_id):
 
         for src, dest in required_files:
             src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
-            dest_path = os.path.join(current_app.config['TESTS_FOLDER_Q1'], dest)
+            dest_path = os.path.join(current_app.config['TEST_ENCRYPTION_FOLDER'], dest)
             print(f"[DEBUG] Copying from {src_path} to {dest_path}")
             shutil.copy2(src_path, dest_path)
 
         build_result = subprocess.run(
-            ["docker", "build", "-t", "minicipher-test-1", "."],
-            cwd=current_app.config['TESTS_FOLDER_Q1'],
+            ["docker", "build", "-t", "minicipher-test-encryption", "."],
+            cwd=current_app.config['TEST_ENCRYPTION_FOLDER'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -106,8 +106,8 @@ def submit_code(question_id):
             })
 
         test_result = subprocess.run(
-            ["docker", "run", "--rm", "minicipher-test-1"],
-            cwd=current_app.config['TESTS_FOLDER_Q1'],
+            ["docker", "run", "--rm", "minicipher-test-encryption"],
+            cwd=current_app.config['TEST_ENCRYPTION_FOLDER'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -122,8 +122,8 @@ def submit_code(question_id):
             "details": test_result.stdout
         })
 
-    if question_id == 3:
-        print("[DEBUG] Running Docker for Q3")
+    if question_id == 2:
+        print("[DEBUG] Running Docker for Q2")
 
         required_files = [
             ('minicipher', 'minicipher'),
@@ -133,13 +133,13 @@ def submit_code(question_id):
 
         for src, dest in required_files:
             src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
-            dest_path = os.path.join(current_app.config['TESTS_FOLDER_Q3'], dest)
+            dest_path = os.path.join(current_app.config['TEST_DECRYPTION_FOLDER'], dest)
             print(f"[DEBUG] Copying from {src_path} to {dest_path}")
             shutil.copy2(src_path, dest_path)
 
         build_result = subprocess.run(
-            ["docker", "build", "-t", "minicipher-test-3", "."],
-            cwd=current_app.config['TESTS_FOLDER_Q3'],
+            ["docker", "build", "-t", "minicipher-test-decryption", "."],
+            cwd=current_app.config['TEST_DECRYPTION_FOLDER'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -154,8 +154,192 @@ def submit_code(question_id):
             })
 
         test_result = subprocess.run(
-            ["docker", "run", "--rm", "minicipher-test-3"],
-            cwd=current_app.config['TESTS_FOLDER_Q3'],
+            ["docker", "run", "--rm", "minicipher-test-decryption"],
+            cwd=current_app.config['TEST_DECRYPTION_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        return jsonify({
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
+    
+    if question_id == 8:
+        print("[DEBUG] Running Docker for Q8")
+
+        required_files = [
+            ('find_key.py', 'find_key.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TEST_K5_1_FOLDER'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "find_k5_1", "."],
+            cwd=current_app.config['TEST_K5_1_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "find_k5_1"],
+            cwd=current_app.config['TEST_K5_1_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        return jsonify({
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
+    
+    if question_id == 9:
+        print("[DEBUG] Running Docker for Q9")
+
+        required_files = [
+            ('find_key.py', 'find_key.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TEST_K5_2_FOLDER'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "find_k5_2", "."],
+            cwd=current_app.config['TEST_K5_2_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "find_k5_2"],
+            cwd=current_app.config['TEST_K5_2_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        return jsonify({
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
+    
+    if question_id == 12:
+        print("[DEBUG] Running Docker for Q12")
+
+        required_files = [
+            ('find_key.py', 'find_key.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TEST_K4_FOLDER'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "find_k4", "."],
+            cwd=current_app.config['TEST_K4_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "find_k4"],
+            cwd=current_app.config['TEST_K4_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        return jsonify({
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
+    
+    if question_id == 14:
+        print("[DEBUG] Running Docker for Q14")
+
+        required_files = [
+            ('find_key.py', 'find_key.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TEST_K3_FOLDER'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "find_k3", "."],
+            cwd=current_app.config['TEST_K3_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "find_k3"],
+            cwd=current_app.config['TEST_K3_FOLDER'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True
@@ -174,6 +358,7 @@ def submit_code(question_id):
         "status": "SUCCESS",
         "message": "Test submitted"
     })
+    
 
 def update_file(question_id, new_code):
     markers = {
@@ -188,7 +373,7 @@ def update_file(question_id, new_code):
         15: ("##### START_QUESTION_15 #####", "##### END_QUESTION_15 #####")
     }
 
-    if question_id in {1, 2, 3}:
+    if question_id in {1, 2}:
         PATH = MINICIPHER_PATH
     elif question_id == 4:
         PATH = COMPUTE_PROBAS_PATH

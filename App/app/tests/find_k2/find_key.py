@@ -303,5 +303,95 @@ def find_k3_part2() -> int:
 
 
 ##### START_QUESTION_15 #####
+def find_k2() -> int:
+    """
+    Trouve k2 complet (16 bits) en testant :
+        1. Toutes les clés candidates 16 bits
+        2. Pour un couple (M, C) connu, vérifie la cohérence du chiffrement
 
+    Retourne la clé validant le chiffrement
+    """
+    # Récupération des sous-clés précédentes
+    k5 = find_k5_part1() | find_k5_part2()
+    k4 = find_k4_part1() | find_k4_part2()
+    k3 = find_k3_part1() | find_k3_part2()
+    
+    # Lecture des paires chiffrées
+    pairs = read_cipher_pairs("pairs_k2_bbbb.txt")
+    
+    # Paramètres de l'attaque différentielle pour K2
+    expected_delta = 0xBBBB  # Différence attendue pour K2
+    mask = 0xFFFF  # Masque complet (16 bits)
+    
+    scores = [0] * 65536
+    
+    for k2 in range(65536):
+        if k2 & ~mask != 0:
+            continue  # Respect du masque (ici inutile car mask=0xFFFF)
+        
+        score = 0
+        for C, C_prime in pairs:
+            # Décryptage partiel jusqu'à K2 pour C
+            X = C ^ k5
+            U = 0
+            for i in range(4):
+                shift = 4 * i
+                U |= (s_inv[(X >> shift) & 0xF] << shift)
+            
+            V = U ^ k4
+            W = perm_inverse(V)
+            
+            Z = 0
+            for i in range(4):
+                shift = 4 * i
+                Z |= (s_inv[(W >> shift) & 0xF] << shift)
+            
+            Y = Z ^ k3
+            T = perm_inverse(Y)
+            
+            T3 = 0
+            for i in range(4):
+                shift = 4 * i
+                T3 |= (s_inv[(T >> shift) & 0xF] << shift)
+            
+            # Décryptage partiel jusqu'à K2 pour C_prime (même processus)
+            Xp = C_prime ^ k5
+            Up = 0
+            for i in range(4):
+                shift = 4 * i
+                Up |= (s_inv[(Xp >> shift) & 0xF] << shift)
+            
+            Vp = Up ^ k4
+            Wp = perm_inverse(Vp)
+            
+            Zp = 0
+            for i in range(4):
+                shift = 4 * i
+                Zp |= (s_inv[(Wp >> shift) & 0xF] << shift)
+            
+            Yp = Zp ^ k3
+            Tp = perm_inverse(Yp)
+            
+            T3p = 0
+            for i in range(4):
+                shift = 4 * i
+                T3p |= (s_inv[(Tp >> shift) & 0xF] << shift)
+            
+            # Vérification de la différence attendue
+            if (T3 ^ T3p) == expected_delta:
+                score += 1
+        
+        scores[k2] = score
+    
+    return max(range(65536), key=lambda k: scores[k])
+
+
+def find_k1(k2: int, known_pair: tuple[int, int]) -> int:
+    """
+    Trouve k1 (16 bits) après avoir obtenu k2 :
+        1. Utilise le couple (M, C) connu
+        2. Calcule k1 en inversant le chiffrement avec k2 déjà trouvé
+
+    Retourne la clé k1 complète
+    """
 ##### END_QUESTION_15 #####

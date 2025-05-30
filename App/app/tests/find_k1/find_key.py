@@ -303,5 +303,175 @@ def find_k3_part2() -> int:
 
 
 ##### START_QUESTION_15 #####
+def find_k2() -> int:
+    """
+    Trouve k2 complet (16 bits) en testant :
+        1. Toutes les clés candidates 16 bits
+        2. Pour un couple (M, C) connu, vérifie la cohérence du chiffrement
 
+    Retourne la clé validant le chiffrement
+    """
+    # Récupération des sous-clés précédentes
+    k5 = find_k5_part1() | find_k5_part2()
+    k4 = find_k4_part1() | find_k4_part2()
+    k3 = find_k3_part1() | find_k3_part2()
+    
+    # Lecture des paires chiffrées
+    pairs = read_cipher_pairs("pairs_k2_bbbb.txt")
+    
+    # Paramètres de l'attaque différentielle pour K2
+    expected_delta = 0xBBBB  # Différence attendue pour K2
+    mask = 0xFFFF  # Masque complet (16 bits)
+    
+    scores = [0] * 65536
+    
+    for k2 in range(65536):
+        if k2 & ~mask != 0:
+            continue  # Respect du masque (ici inutile car mask=0xFFFF)
+        
+        score = 0
+        for C, C_prime in pairs:
+            # Décryptage partiel jusqu'à K2 pour C
+            X = C ^ k5
+            U = 0
+            for i in range(4):
+                shift = 4 * i
+                U |= (s_inv[(X >> shift) & 0xF] << shift)
+            
+            V = U ^ k4
+            W = perm_inverse(V)
+            
+            Z = 0
+            for i in range(4):
+                shift = 4 * i
+                Z |= (s_inv[(W >> shift) & 0xF] << shift)
+            
+            Y = Z ^ k3
+            T = perm_inverse(Y)
+            
+            T3 = 0
+            for i in range(4):
+                shift = 4 * i
+                T3 |= (s_inv[(T >> shift) & 0xF] << shift)
+            
+            # Décryptage partiel jusqu'à K2 pour C_prime (même processus)
+            Xp = C_prime ^ k5
+            Up = 0
+            for i in range(4):
+                shift = 4 * i
+                Up |= (s_inv[(Xp >> shift) & 0xF] << shift)
+            
+            Vp = Up ^ k4
+            Wp = perm_inverse(Vp)
+            
+            Zp = 0
+            for i in range(4):
+                shift = 4 * i
+                Zp |= (s_inv[(Wp >> shift) & 0xF] << shift)
+            
+            Yp = Zp ^ k3
+            Tp = perm_inverse(Yp)
+            
+            T3p = 0
+            for i in range(4):
+                shift = 4 * i
+                T3p |= (s_inv[(Tp >> shift) & 0xF] << shift)
+            
+            # Vérification de la différence attendue
+            if (T3 ^ T3p) == expected_delta:
+                score += 1
+        
+        scores[k2] = score
+    
+    return max(range(65536), key=lambda k: scores[k])
+
+
+def find_k1() -> int:
+    """
+    Trouve k1 (16 bits) après avoir obtenu k2 :
+        1. Utilise le couple (M, C) connu
+        2. Calcule k1 en inversant le chiffrement avec k2 déjà trouvé
+
+    Retourne la clé k1 complète
+    """
+    # Get previously recovered keys
+    k5 = find_k5_part1() | find_k5_part2()
+    k4 = find_k4_part1() | find_k4_part2()
+    k3 = find_k3_part1() | find_k3_part2()
+    k2 = find_k2()
+    
+    # Hardcoded plaintext-ciphertext pairs (replace with actual pairs)
+    pairs = [
+        (0x0000, 0x1234),  # Example pair 1
+        (0xFFFF, 0xABCD),   # Example pair 2
+        # Add more known pairs as needed
+    ]
+    
+    scores = [0] * 65536  # Score for each possible k1 candidate
+    
+    for k1 in range(65536):
+        score = 0
+        for plaintext, ciphertext in pairs:
+            # Step 1: Undo K5
+            T = ciphertext ^ k5
+            
+            # Step 2: Inverse last S-Box layer
+            U = 0
+            for i in range(4):
+                nibble = (T >> (4*i)) & 0xF
+                U |= (s_inv[nibble] << (4*i))
+            
+            # Step 3: Undo K4
+            V = U ^ k4
+            
+            # Step 4: Inverse permutation
+            W = 0
+            for bitpos in range(16):
+                if (V >> bitpos) & 1:
+                    W |= (1 << perm_inv[bitpos])
+            
+            # Step 5: Inverse penultimate S-Box
+            X = 0
+            for i in range(4):
+                nibble = (W >> (4*i)) & 0xF
+                X |= (s_inv[nibble] << (4*i))
+            
+            # Step 6: Undo K3
+            Y = X ^ k3
+            
+            # Step 7: Inverse permutation
+            Z = 0
+            for bitpos in range(16):
+                if (Y >> bitpos) & 1:
+                    Z |= (1 << perm_inv[bitpos])
+            
+            # Step 8: Inverse pre-penultimate S-Box
+            T3 = 0
+            for i in range(4):
+                nibble = (Z >> (4*i)) & 0xF
+                T3 |= (s_inv[nibble] << (4*i))
+            
+            # Step 9: Undo K2
+            W_final = T3 ^ k2
+            
+            # Step 10: Final permutation inverse
+            Z_final = 0
+            for bitpos in range(16):
+                if (W_final >> bitpos) & 1:
+                    Z_final |= (1 << perm_inv[bitpos])
+            
+            # Step 11: Final S-Box inverse
+            T4 = 0
+            for i in range(4):
+                nibble = (Z_final >> (4*i)) & 0xF
+                T4 |= (s_inv[nibble] << (4*i))
+            
+            # Verification: T4 XOR k1 should equal plaintext
+            if (T4 ^ k1) == plaintext:
+                score += 1
+        
+        scores[k1] = score
+    
+    # Return the key with highest score
+    return max(range(65536), key=lambda k: scores[k])
 ##### END_QUESTION_15 #####

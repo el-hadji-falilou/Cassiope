@@ -13,7 +13,6 @@
     let editors = {};
 
     require(['vs/editor/editor.main'], function() {
-      // Initialisation des trois éditeurs
       editors.q1 = monaco.editor.create(document.getElementById('editor-container-q1'), {
           value: getInitialCode(1),
           language: 'python',
@@ -24,14 +23,6 @@
 
       editors.q2 = monaco.editor.create(document.getElementById('editor-container-q2'), {
           value: getInitialCode(2),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q3 = monaco.editor.create(document.getElementById('editor-container-q3'), {
-          value: getInitialCode(3),
           language: 'python',
           theme: 'vs-dark',
           automaticLayout: true,
@@ -90,13 +81,17 @@
     function getInitialCode(question) {
       if (question === 1) {
         return [
-            '# S-Box',
             's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
-            '',
-            '',
-            '# Permutation',
             'perm = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]',
             '',
+            'global s_inv, perm_inv',
+            's_inv = [0]*16',
+            'perm_inv = [0]*16',
+            '',
+            'def init_inverse_ops():',
+            '     """This function populates  s_inv et perm_inv to make decryption possible.',
+            '     Of course, it should be called BEFORE any decryption operation.',
+            '     """',
             '',
             'def encrypt_round(input, key, do_perm):',
             '     """encrypt_round',
@@ -110,7 +105,6 @@
             '     ------',
             '     the output value for the round',
             '     """',
-            '',
             '',
             'def encrypt(plaintext, keys):',
             '     """encrypt',
@@ -126,29 +120,6 @@
         ].join('\n');
       } else if (question === 2) {
         return [
-            'def encrypt(plaintext, keys):',
-            '     """encrypt',
-            '     Parameters',
-            '     ----------',
-            '     plaintext : input plaintext to encrypt',
-            '     keys      : array containing the 5 subkeys (i.e. the complete key)',
-            '',
-            '     Output',
-            '     ------',
-            '     the encrypted value',
-            '     """'
-        ].join('\n');
-      } else if (question === 3) {
-        return [
-            'global s_inv, perm_inv',
-            's_inv = [0]*16',
-            'perm_inv = [0]*16',
-            '',
-            'def init_inverse_ops():',
-            '      """This function populates  s_inv et perm_inv to make decryption possible.',
-            '      Of course, it should be called BEFORE any decryption operation.',
-            '      """',
-            '',
             'def decrypt_round(input, key, do_perm):',
             '      """decrypt_round',
             '      Parameters',
@@ -172,7 +143,7 @@
             '      Output',
             '      ------',
             '      The decrypted plaintext',
-            '      """',
+            '      """'
         ].join('\n');
       } else if (question === 4) {
         return [
@@ -194,27 +165,45 @@
       } else if (question === 8) {
         return [
             's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
-            '# À compléter : inverser la S-box (s_inv)',
+            'perm = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]',
+            '',
+            'global s_inv, perm_inv',
+            's_inv = [0]*16',
+            'perm_inv = [0]*16',
+            '',
+            'def init_inverse_ops():',
+            '    """This function populates  s_inv et perm_inv to make decryption possible.',
+            '    Of course, it should be called BEFORE any decryption operation.',
+            '    """',
+            '',
+            'def perm_inverse(x):',
+            '"""',
+            'Applique l\'inverse de la permutation de MiniCipher sur un entier 16 bits.',
+            '"""',
+            '',
+            'def read_cipher_pairs(filename):',
+            '    """Reads a text file containing (C, C\') pairs in hexadecimal',
+            '    and returns a list of (int, int) tuples."""',
             '',
             'def find_k5_part1() -> int:',
-            '     """',
-            '     Trouve les 8 bits de k5 (masque 0x0F0F) en testant :',
-            '         1. Toutes les clés candidates 8 bits',
-            '         2. Pour chaque paire (C, C\') dans pairs-k5_0b00_0606.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
+            '    """',
+            '    Trouve les 8 bits de k5 (masque 0x0F0F) en testant :',
+            '        1. Toutes les clés candidates 8 bits',
+            '        2. Pour chaque paire (C, C\') dans pairs-k5_0b00_0606.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
             '',
-            '     Retourne la clé avec le plus de succès',
-            '     """'
+            '    Retourne la clé avec le plus de succès',
+            '    """'
         ].join('\n');
       } else if (question === 9) {
         return [
             'def find_k5_part2() -> int:',
-            '     """',
-            '     Trouve les 8 bits de k5 (masque 0xF0F0) en testant :',
-            '         1. Toutes les clés candidates 8 bits',
-            '         2. Pour chaque paire (C, C\') dans pairs-k5_000d_a0a0.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
+            '    """',
+            '    Trouve les 8 bits de k5 (masque 0xF0F0) en testant :',
+            '        1. Toutes les clés candidates 8 bits',
+            '        2. Pour chaque paire (C, C\') dans pairs-k5_000d_a0a0.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
             '',
-            '     Retourne la clé avec le plus de succès',
-            '     """'
+            '    Retourne la clé avec le plus de succès',
+            '    """'
         ].join('\n');
       } else if (question === 12) {
         return [
@@ -519,8 +508,11 @@
           <li>application des S-Boxes sur chacun des quatre quartets du mot de 16 bits;</li>
           <li>s'il ne s'agit pas du dernier tour, application de la permutation.</li>
         </ul>
+        Ecrivez la fonction encrypt qui réalise le calcul complet du chiffrement par MiniCipher.<br><br>
+        Le chiffrement complet d'un bloc se déroule en 4 étapes (la dernière ne faisant pas intervenir de permutation), suivi de l'ajout (au sens XOR) de la 
+        dernière sous-clé.
       </p>
-      <div id="editor-container-q1" style="height: 650px; border: 1px solid #ccc;"></div>
+      <div id="editor-container-q1" style="height: 700px; border: 1px solid #ccc;"></div>
       <div class="action-buttons">
           <button onclick="submitCode(1)">Soumettre</button>
       </div>
@@ -529,22 +521,6 @@
 
     <div class="question">
       <h3>Question 2</h3>
-      <p>
-          Ecrivez la fonction encrypt qui réalise le calcul complet du chiffrement par MiniCipher.<br><br>
-          Le chiffrement complet d'un bloc se déroule en 4 étapes (la dernière ne faisant pas intervenir de permutation), suivi de l'ajout (au sens XOR) de la 
-          dernière sous-clé.<br><br>
-          Si vous souhaitez ici vérifier votre implémentation à l'aide de scripts, vous pouvez appeler le script de test avec le paramètre 0, à l'aide de la commande 
-          ./test-encryption.sh 0. Vous pourrez alors comparer votre résultat au fichier test-encryption.0.out.
-      </p>
-      <div id="editor-container-q2" style="height: 300px; border: 1px solid #ccc;"></div>
-      <div class="action-buttons">
-          <button onclick="submitCode(2)">Soumettre</button>
-      </div>
-      <div id="output-q2" style="margin-top: 20px;"></div>
-    </div>
-
-    <div class="question">
-      <h3>Question 3</h3>
       <p>
         Ecrivez la fonction decrypt qui réalise le calcul complet du déchiffrement. Pour cela, vous réaliserez les fonctions suivantes :
       </p>
@@ -558,11 +534,11 @@
         test-decryption.0.out.<br><br>
         Enfin, vous pouvez faire des tests de chiffrement / déchiffrement à l'aide de ./test-identity.sh 0.
       </p>
-      <div id="editor-container-q3" style="height: 640px; border: 1px solid #ccc;"></div>
+      <div id="editor-container-q2" style="height: 500px; border: 1px solid #ccc;"></div>
       <div class="action-buttons">
-          <button onclick="submitCode(3)">Soumettre</button>
+          <button onclick="submitCode(2)">Soumettre</button>
       </div>
-      <div id="output-q3" style="margin-top: 20px;"></div>
+      <div id="output-q2" style="margin-top: 20px;"></div>
     </div>
     </section>
 
@@ -886,7 +862,7 @@
           Ecrivez le code implémentant l'attaque pour le chemin différentiel 0b00 ⇒ 0606, et déduisez-en 8 bits de la sous-clé k5.<br><br>
           Afin de vérifier votre travail, des paires supplémentaires ont été générées pour la clé nulle, et sont fournis dans le répertoire crypto-material-null-key.
         </p>
-        <div id="editor-container-q8" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div id="editor-container-q8" style="height: 500px; border: 1px solid #ccc;"></div>
         <div class="action-buttons">
             <button onclick="submitCode(8)">Soumettre</button>
         </div>

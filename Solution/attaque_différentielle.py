@@ -149,8 +149,8 @@ def recover_k4_using_mask(pairs, expected_delta, mask, k5):
     return best_k4
 
 # Lecture des paires pour K4
-pairs_k4_0040_0606 = read_cipher_pairs("pairs-k4_0040_0606.txt")
-pairs_k4_0005_a0a0 = read_cipher_pairs("pairs-k4_0005_a0a0.txt")
+pairs_k4_0040_0606 = read_cipher_pairs("pairs-k4_0040.txt")
+pairs_k4_0005_a0a0 = read_cipher_pairs("pairs-k4_0005.txt")
 
 # Application des deux masques pour récupérer K4
 best_k4_mask1 = recover_k4_using_mask(pairs_k4_0040_0606, expected_delta=0x0606, mask=0x5555, k5=full_k5)
@@ -230,8 +230,8 @@ def recover_k3_using_mask(pairs, expected_delta, mask, known_k5, known_k4):
     return best_k3
 
 # Lecture des paires pour K3
-pairs_k3_0606 = read_cipher_pairs("pairs_k3_delta_in_0220.txt")
-pairs_k3_a0a0 = read_cipher_pairs("pairs_k3_delta_in_1010.txt")
+pairs_k3_0606 = read_cipher_pairs("pairs_k3_0220.txt")
+pairs_k3_a0a0 = read_cipher_pairs("pairs_k3_1010.txt")
 
 # Application des deux masques spécifiés par l'enseignant pour récupérer K3
 best_k3_mask1 = recover_k3_using_mask(pairs_k3_0606, expected_delta=0x0606, mask=0x5555, known_k5=full_k5, known_k4=full_k4)
@@ -332,7 +332,7 @@ def recover_k2(known_k5, known_k4, known_k3, pairs):
     return best_k2
 
 # Lecture des paires pour K2
-pairs_k2 = read_cipher_pairs("pairs-k2_delta_in_bbbb.txt")  # Vérifie le bon fichier
+pairs_k2 = read_cipher_pairs("pairs_k2_bbbb.txt")  # Vérifie le bon fichier
 
 # Récupération de K2
 full_k2 = recover_k2(full_k5, full_k4, full_k3, pairs_k2)
