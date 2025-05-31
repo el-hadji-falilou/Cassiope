@@ -353,6 +353,52 @@ def submit_code(question_id):
             "result": "SUCCESS" if test_passed else "FAILED",
             "details": test_result.stdout
         })
+    
+    if question_id == 15:
+        print("[DEBUG] Running Docker for Q15")
+
+        required_files = [
+            ('find_key.py', 'find_key.py')
+        ]
+
+        for src, dest in required_files:
+            src_path = os.path.join(current_app.config['SUBMISSIONS_FOLDER'], src)
+            dest_path = os.path.join(current_app.config['TEST_K1_K2_FOLDER'], dest)
+            print(f"[DEBUG] Copying from {src_path} to {dest_path}")
+            shutil.copy2(src_path, dest_path)
+
+        build_result = subprocess.run(
+            ["docker", "build", "-t", "find_k1_k2", "."],
+            cwd=current_app.config['TEST_K1_K2_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"[DEBUG] Docker build output:\n{build_result.stdout}")
+
+        if build_result.returncode != 0:
+            return jsonify({
+                "status": "FAILED",
+                "message": "Docker build failed",
+                "details": build_result.stderr
+            })
+
+        test_result = subprocess.run(
+            ["docker", "run", "--rm", "find_k1_k2"],
+            cwd=current_app.config['TEST_K1_K2_FOLDER'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        test_passed = "SUCCESS" in test_result.stdout
+        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        return jsonify({
+            "status": "SUCCESS" if test_passed else "FAILED",
+            "message": "Test submitted and executed",
+            "result": "SUCCESS" if test_passed else "FAILED",
+            "details": test_result.stdout
+        })
 
     return jsonify({
         "status": "SUCCESS",

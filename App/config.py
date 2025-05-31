@@ -19,8 +19,7 @@ class BaseConfig:
     TEST_K5_2_FOLDER = os.path.join(BASE_DIR, 'app', 'tests', 'find_k5_2')
     TEST_K4_FOLDER = os.path.join(BASE_DIR, 'app', 'tests', 'find_k4')
     TEST_K3_FOLDER = os.path.join(BASE_DIR, 'app', 'tests', 'find_k3')
-    TEST_K1_FOLDER = os.path.join(BASE_DIR, 'app', 'tests', 'find_k1')
-    TEST_K2_FOLDER = os.path.join(BASE_DIR, 'app', 'tests', 'find_k2')
+    TEST_K1_K2_FOLDER = os.path.join(BASE_DIR, 'app', 'tests', 'find_k1_k2')
 
     # Crypto settings
     N_PAIRS = int(os.getenv('N_PAIRS', 2000))
