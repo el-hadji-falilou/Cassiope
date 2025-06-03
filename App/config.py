@@ -5,6 +5,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 class BaseConfig:
     # Security
     SECRET_KEY = os.getenv('SECRET_KEY', 'change-me')
+
+    MINICIPHER_CMD = os.path.join(BASE_DIR, 'app', 'submissions', 'minicipher-main.py')
     
     SUBMISSIONS_FOLDER = os.getenv('SUBMISSIONS_FOLDER', './submissions')
     CRYPTO_FOLDER      = os.getenv('CRYPTO_FOLDER', './crypto-materials')

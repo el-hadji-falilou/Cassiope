@@ -10,7 +10,7 @@ teacher_bp = Blueprint('teacher', __name__, template_folder='../templates/teache
 @teacher_bp.route('/dashboard')
 @login_required
 def dashboard():
-     """Tableau de bord enseignant"""
+    """Tableau de bord enseignant"""
     if current_user.role.name!='teacher':
         return redirect(url_for('auth.login'))
     cohorts = Cohort.query.all()

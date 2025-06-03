@@ -55,7 +55,7 @@ def set_message(pid):
 @promo_bp.route('/new', methods=['GET','POST'])
 @login_required
 def new_promotion():
-     """Création d'une nouvelle promotion"""
+    """Création d'une nouvelle promotion"""
     if request.method == 'POST':
         name = request.form['name'].strip()
         key_master = request.form['key_master'].strip()

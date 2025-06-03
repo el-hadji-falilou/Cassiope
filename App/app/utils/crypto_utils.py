@@ -2,10 +2,7 @@ import os, sys, subprocess
 from flask import current_app
 
 def encrypt_block(plaintext_hex: str, key_hex: str) -> str:
-    cmd_path = current_app.config.get(
-        'MINICIPHER_CMD',
-        os.path.abspath('tests/part1/minicipher-main.py')
-    )
+    cmd_path = current_app.config['MINICIPHER_CMD']
     workdir = os.path.dirname(cmd_path)
     if cmd_path.endswith('.py'):
         cmd = [sys.executable, cmd_path, '-e', '-1', '-k', key_hex]

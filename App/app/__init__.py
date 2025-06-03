@@ -2,6 +2,8 @@ import os
 from flask import Flask
 from .extensions import db, migrate, login, mail
 from app.routes.student import student_bp
+from .models import ValidatedCode  # <-- ou from app.models import ValidatedCode selon ton arborescence
+
 
 # IMPORTS DES BLUEPRINTS
 from .routes.auth       import auth_bp

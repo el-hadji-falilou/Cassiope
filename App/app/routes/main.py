@@ -8,4 +8,4 @@ main_bp = Blueprint('main', __name__)
 @login_required  # Accès protégé
 def index():
   """Page d'accueil après connexion"""
-    return render_template('index.html')
+  return render_template('index.html')
