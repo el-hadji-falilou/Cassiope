@@ -10,6 +10,7 @@ import importlib.util
 
 from app.models import Cohort, CryptoMaterial, UserRole
 
+# Routes pour les étudiants (TP crypto)
 student_bp = Blueprint('student', __name__, template_folder="../templates/student")
 
 MINICIPHER_PATH = os.path.abspath("./app/submissions/minicipher.py")
@@ -21,9 +22,10 @@ EXPECTED_ANSWER_PATH = os.path.abspath("./app/tests/expected_answers.json")
 @student_bp.route('/tp')
 @login_required
 def tp_page():
+    """Page principale du TP"""
     # Seuls les étudiants ont accès
     if not hasattr(current_user, "role") or current_user.role != UserRole.student:
-        abort(403)
+        abort(403) # Accès interdit
     promo = current_user.cohort
     materials = promo.materials if hasattr(promo, 'materials') else []
     return render_template("student/tp_student.html", cohort=promo, materials=materials, user=current_user)
@@ -42,6 +44,7 @@ def download_material(filename):
 @student_bp.route("/submit_code/<int:question_id>", methods=["POST"])
 @login_required
 def submit_code(question_id):
+    """Soumission et validation du code étudiant"""
     print(f"[DEBUG] Handling submission for question {question_id}")
 
     if "code" not in request.files:
