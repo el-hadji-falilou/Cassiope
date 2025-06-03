@@ -4,11 +4,13 @@ from app.models import Cohort, User, UserRole
 from app.extensions import db
 import random, string
 
+# Routes réservées aux enseignants
 teacher_bp = Blueprint('teacher', __name__, template_folder='../templates/teacher')
 
 @teacher_bp.route('/dashboard')
 @login_required
 def dashboard():
+     """Tableau de bord enseignant"""
     if current_user.role.name!='teacher':
         return redirect(url_for('auth.login'))
     cohorts = Cohort.query.all()
@@ -28,6 +30,7 @@ def list_admins():
 @teacher_bp.route('/admins/add', methods=['GET', 'POST'])
 @login_required
 def add_admin():
+    """Ajout d'un nouvel enseignant"""
     if getattr(current_user, 'role', None) != UserRole.teacher:
         flash("Accès refusé.", "danger")
         return redirect(url_for('teacher.list_admins'))
