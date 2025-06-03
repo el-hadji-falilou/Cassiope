@@ -10,6 +10,7 @@ import random, string
 
 passwords = []
 
+# Gestion des promotions (création/suppression/étudiants)
 promo_bp = Blueprint(
     'admin_promotions',
     __name__,
@@ -54,6 +55,7 @@ def set_message(pid):
 @promo_bp.route('/new', methods=['GET','POST'])
 @login_required
 def new_promotion():
+     """Création d'une nouvelle promotion"""
     if request.method == 'POST':
         name = request.form['name'].strip()
         key_master = request.form['key_master'].strip()
@@ -65,7 +67,7 @@ def new_promotion():
         if existing:
             flash("Erreur : une promotion avec ce nom et cette clé existe déjà.", "danger")
             return redirect(url_for('admin_promotions.list_promotions'))
-        
+        # Création avec clé crypto
         c = Cohort(name=name, key_master=key_master)
         db.session.add(c)
         db.session.commit()
@@ -136,12 +138,14 @@ def generate_material(pid):
     CryptoMaterial.query.filter_by(cohort_id=pid).delete()
     db.session.commit()
 
+    # Génération des paires (delta_in/delta_out)
     metas = generate_diff_material(
         promo_name  = promo.name,
         key_hex     = promo.key_master,
         count       = current_app.config['N_PAIRS'],
         base_folder = current_app.config['CRYPTO_FOLDER']
     )
+    # Enregistrement en base
     for m in metas:
         db.session.add(CryptoMaterial(
             cohort    = promo,
