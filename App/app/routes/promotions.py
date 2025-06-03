@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 from app.extensions import db
-from app.models import Cohort, CryptoMaterial, User, UserRole
+from app.models import Cohort, CryptoMaterial, Submission, User, UserRole
 from werkzeug.security import generate_password_hash
 from app.utils.promotion_utils import generate_diff_material, generate_plaintext_ciphertext, generate_message_xyz,generate_diff_material 
 import random, string
@@ -55,10 +55,18 @@ def set_message(pid):
 @login_required
 def new_promotion():
     if request.method == 'POST':
-        c = Cohort(
-            name=request.form['name'],
-            key_master=request.form['key_master']
-        )
+        name = request.form['name'].strip()
+        key_master = request.form['key_master'].strip()
+        
+        # Vérifie si une promo avec ce nom ET cette clé existe déjà
+        existing = Cohort.query.filter(
+            (Cohort.name == name) & (Cohort.key_master == key_master)
+        ).first()
+        if existing:
+            flash("Erreur : une promotion avec ce nom et cette clé existe déjà.", "danger")
+            return redirect(url_for('admin_promotions.list_promotions'))
+        
+        c = Cohort(name=name, key_master=key_master)
         db.session.add(c)
         db.session.commit()
         flash('Promotion créée', 'success')
@@ -74,25 +82,6 @@ def download_material(pid, filename):
     return send_from_directory(folder, filename, as_attachment=True)
 
 
-@promo_bp.route('/add_teacher', methods=['POST'])
-@login_required
-def add_teacher():
-    # Optionnel : vérifier que l’utilisateur courant est bien admin
-    email = request.form['email']
-    name  = request.form['name']
-    password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-    user = User(
-        email=email,
-        name=name,
-        hashed_password=generate_password_hash(password),
-        role=UserRole.teacher  # ou admin
-    )
-    db.session.add(user)
-    db.session.commit()
-    # Optionnel : envoyer un mail au nouvel enseignant (voir plus haut)
-    flash(f"Nouvel enseignant ajouté : {email} (mot de passe provisoire : {password})", "success")
-    return redirect(url_for('teacher.dashboard'))
-
 @promo_bp.route('/<int:pid>', methods=['GET'])
 @login_required
 def detail_promotion(pid):
@@ -101,7 +90,24 @@ def detail_promotion(pid):
     et liste du matériel déjà importé).
     """
     c = Cohort.query.get_or_404(pid)
-    return render_template('detail.html', cohort=c)
+    users = c.users  # ou User.query.filter_by(cohort_id=pid).all()
+    # Liste des questions
+    questions = ["Q1", "Q2", "Q3", "Q4"]  # Mets ici tes vraies questions
+    # Progression
+    progress = {}
+    for u in users:
+        progress[u] = {}
+        for q in questions:
+            # On cherche la dernière soumission pour la question q de cet utilisateur
+            sub = Submission.query.filter_by(user_id=u.id, question=q).order_by(Submission.id.desc()).first()
+            progress[u][q] = sub.status if sub else "pending"
+    return render_template(
+        "teacher/promotions/detail.html",
+        cohort=c,
+        users=users,
+        questions=questions,
+        progress=progress
+    )
 
 @promo_bp.route('/<int:pid>/upload', methods=['POST'])
 @login_required
@@ -184,25 +190,47 @@ def clear_material(pid):
 def add_student(pid):
     """Inscrire un étudiant dans la promo."""
     c = Cohort.query.get_or_404(pid)
-    email = request.form['email']
-    name  = request.form['name']
-    pwd   = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    email = request.form['email'].strip().lower()
+    name  = request.form['name'].strip()
     password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+
+    # 1. Vérifie si l'étudiant existe déjà (par email)
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
+        flash(f"Erreur : L'étudiant '{email}' appartient déjà à une promotion.", "danger")
+        return redirect(url_for('admin_promotions.detail_promotion', pid=pid))
+
+    #  2. Création normale si l'étudiant n'existe pas
     hashed_password = generate_password_hash(password)
     u = User(
-        email        = email,
-        name         = name,
-        hashed_password=generate_password_hash(password),
-        role         = UserRole.student,
-        cohort_id    = pid
+        email=email,
+        name=name,
+        hashed_password=hashed_password,
+        role=UserRole.student,
+        cohort_id=pid
     )
     db.session.add(u)
     db.session.commit()
-    # Ajoute (nom, mail, mdp) à la liste pour affichage
-    passwords.append({'name': name, 'email': email, 'password': password})
-    # Passe la liste à la page de la promo
+    # Ajoute (nom, mail, mdp) à la liste pour affichage 
+    passwords.append({'name': name, 'email': email, 'password': password})  
+
     flash(f"Étudiant ajouté : {name} — Mot de passe provisoire : {password}", "info")
     return redirect(url_for('admin_promotions.detail_promotion', pid=pid))
+
+# Suivre la progression de chaque étudiant 
+def get_student_progress(cohort_id):
+    users = User.query.filter_by(cohort_id=cohort_id).all()
+    questions = ["Q1", "Q2", "Q3", ...]
+    progress = {}
+    for u in users:
+        # Pour chaque question, récupère le statut de la dernière soumission
+        user_progress = {}
+        for q in questions:
+            sub = Submission.query.filter_by(user_id=u.id, question=q).order_by(Submission.id.desc()).first()
+            user_progress[q] = sub.status if sub else "pending"
+        progress[u] = user_progress
+    return progress, users, questions
+
 
 # -------------- SUPPRESSION ----------------
 @promo_bp.route('/<int:pid>/delete', methods=['POST'])

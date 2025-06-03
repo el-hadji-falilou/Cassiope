@@ -21,3 +21,17 @@ with app.app_context():
         print("Admin créé !")
     else:
         print("Admin déjà existant.")
+
+
+# Ajouter un admin en ligne shell
+""" 
+export FLASK_APP=run.py
+flask shell
+>>> from app.extensions import db
+>>> from app.models import User, UserRole
+>>> from werkzeug.security import generate_password_hash
+>>> u = User(email="admin@example.com", name="Admin", hashed_password=generate_password_hash("adminpass"), role=UserRole.teacher)
+>>> db.session.add(u); db.session.commit()
+>>> exit()
+
+"""

@@ -21,6 +21,7 @@ EXPECTED_ANSWER_PATH = os.path.abspath("./app/tests/expected_answers.json")
 @student_bp.route('/tp')
 @login_required
 def tp_page():
+    # Seuls les étudiants ont accès
     if not hasattr(current_user, "role") or current_user.role != UserRole.student:
         abort(403)
     promo = current_user.cohort
@@ -32,6 +33,7 @@ def tp_page():
 def download_material(filename):
     promo = current_user.cohort
     folder = os.path.join(current_app.config['CRYPTO_FOLDER'], promo.name)
+    # Vérifie que le fichier appartient bien à la promo de l'étudiant
     safe_files = [m.filename for m in promo.materials]
     if filename not in safe_files:
         abort(403)

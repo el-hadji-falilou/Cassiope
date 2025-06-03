@@ -112,3 +112,4 @@ def generate_message_xyz(promo_name: str, key_hex: str, base_folder: str, plaint
         )
     os.remove(tmp_plain)
     return {'filename': fname}
+

@@ -33,26 +33,36 @@
 </table>
 {% endif %}
 
-<p>
-  Lien d’accès étudiant : 
-  <a href="https://127.0.0.1:5000/tp" target="_blank">
-    https://127.0.0.1:5000/tp
-  </a>
-</p>
-
 <h4>Membres de la promotion</h4>
 <table>
-  <tr>
-    <th>Nom</th>
-    <th>E-mail</th>
-  </tr>
-  {% for u in cohort.users %}
-  <tr>
-    <td>{{ u.name }}</td>
-    <td>{{ u.email }}</td>
-  </tr>
-  {% endfor %}
+  <thead>
+    <tr>
+      <th>Nom</th>
+      <th>E-mail</th>
+      {% for q in questions %}
+        <th>{{ q }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      {% for q in questions %}
+        <td>
+          {% set status = progress[user][q] %}
+          <span class="status-dot
+            {% if status == 'done' %}status-done{% elif status == 'failed' %}status-failed{% else %}status-pending{% endif %}">
+            ●
+          </span>
+        </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
+
 
 
 

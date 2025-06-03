@@ -6,6 +6,10 @@ class BaseConfig:
     # Security
     SECRET_KEY = os.getenv('SECRET_KEY', 'change-me')
     
+    SUBMISSIONS_FOLDER = os.getenv('SUBMISSIONS_FOLDER', './submissions')
+    CRYPTO_FOLDER      = os.getenv('CRYPTO_FOLDER', './crypto-materials')
+    
+    CRYPTO_FOLDER = os.getenv('CRYPTO_FOLDER', os.path.join(BASE_DIR, 'crypto-materials'))
     # Database
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///dev.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

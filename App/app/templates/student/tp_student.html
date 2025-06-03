@@ -3,425 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cryptanalyse d'un blockcipher minimaliste</title>
+  <title>Cryptanalyse d'un blockcipher minimaliste - Promo {{ cohort.name }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <!-- Ajout de Monaco Editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
-  <script>
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' }});
 
-    let editors = {};
-
-    require(['vs/editor/editor.main'], function() {
-      editors.q1 = monaco.editor.create(document.getElementById('editor-container-q1'), {
-          value: getInitialCode(1),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q2 = monaco.editor.create(document.getElementById('editor-container-q2'), {
-          value: getInitialCode(2),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q4 = monaco.editor.create(document.getElementById('editor-container-q4'), {
-          value: getInitialCode(4),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q8 = monaco.editor.create(document.getElementById('editor-container-q8'), {
-          value: getInitialCode(8),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q9 = monaco.editor.create(document.getElementById('editor-container-q9'), {
-          value: getInitialCode(9),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q12 = monaco.editor.create(document.getElementById('editor-container-q12'), {
-          value: getInitialCode(12),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q14 = monaco.editor.create(document.getElementById('editor-container-q14'), {
-          value: getInitialCode(14),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-
-      editors.q15 = monaco.editor.create(document.getElementById('editor-container-q15'), {
-          value: getInitialCode(15),
-          language: 'python',
-          theme: 'vs-dark',
-          automaticLayout: true,
-          minimap: { enabled: false }
-      });
-    });
-
-    function getInitialCode(question) {
-      if (question === 1) {
-        return [
-            's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
-            'perm = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]',
-            '',
-            'global s_inv, perm_inv',
-            's_inv = [0]*16',
-            'perm_inv = [0]*16',
-            '',
-            'def init_inverse_ops():',
-            '     """This function populates  s_inv et perm_inv to make decryption possible.',
-            '     Of course, it should be called BEFORE any decryption operation.',
-            '     """',
-            '',
-            'def encrypt_round(input, key, do_perm):',
-            '     """encrypt_round',
-            '     Parameters',
-            '     ----------',
-            '     input   : the input block',
-            '     key     : the sub-key for this round',
-            '     do_perm : if True, perform the permutation (it is False for the last round)',
-            '',
-            '     Output',
-            '     ------',
-            '     the output value for the round',
-            '     """',
-            '',
-            'def encrypt(plaintext, keys):',
-            '     """encrypt',
-            '     Parameters',
-            '     ----------',
-            '     plaintext : input plaintext to encrypt',
-            '     keys      : array containing the 5 subkeys (i.e. the complete key)',
-            '',
-            '     Output',
-            '     ------',
-            '     the encrypted value',
-            '     """'
-        ].join('\n');
-      } else if (question === 2) {
-        return [
-            'def decrypt_round(input, key, do_perm):',
-            '      """decrypt_round',
-            '      Parameters',
-            '      ----------',
-            '      input   : the ciphertext block to decrypt',
-            '      key     : round subkey',
-            '      do_perm : if True, perform the permutation',
-            '',
-            '      Output',
-            '      ------',
-            '      The decrypted plaintext value',
-            '      """',
-            '',
-            'def decrypt(ciphertext, keys):',
-            '      """decrypt',
-            '      Parameters',
-            '      ----------',
-            '      ciphertext : ciphertext to decrypt',
-            '      keys       : array containing the 5 subkeys (i.e. the complete key)',
-            '',
-            '      Output',
-            '      ------',
-            '      The decrypted plaintext',
-            '      """'
-        ].join('\n');
-      } else if (question === 4) {
-        return [
-            'global probas, s',
-            '',
-            '# S-Box',
-            's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
-            '',
-            '# Inverse de la S-Box',
-            's_inv = [0] * 16',
-            '',
-            '# probas[i][j] est le nombre de fois qu\'on a δout=j sachant que δin=i',
-            'probas = [[0 for _ in range(16)] for _ in range(16)]',
-            '',
-            '# On calcule le tableau des probas',
-            'def compute_probas():',
-            '',
-        ].join('\n');
-      } else if (question === 8) {
-        return [
-            's = [0xE, 0x4, 0xD, 0x1, 0x2, 0xF, 0xB, 0x8, 0x3, 0xA, 0x6, 0xC, 0x5, 0x9, 0x0, 0x7]',
-            'perm = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]',
-            '',
-            'global s_inv, perm_inv',
-            's_inv = [0]*16',
-            'perm_inv = [0]*16',
-            '',
-            'def init_inverse_ops():',
-            '    """This function populates  s_inv et perm_inv to make decryption possible.',
-            '    Of course, it should be called BEFORE any decryption operation.',
-            '    """',
-            '',
-            'def perm_inverse(x):',
-            '"""',
-            'Applique l\'inverse de la permutation de MiniCipher sur un entier 16 bits.',
-            '"""',
-            '',
-            'def read_cipher_pairs(filename):',
-            '    """Reads a text file containing (C, C\') pairs in hexadecimal',
-            '    and returns a list of (int, int) tuples."""',
-            '',
-            'def find_k5_part1() -> int:',
-            '    """',
-            '    Trouve les 8 bits de k5 (masque 0x0F0F) en testant :',
-            '        1. Toutes les clés candidates 8 bits',
-            '        2. Pour chaque paire (C, C\') dans pairs-k5_0b00_0606.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
-            '',
-            '    Retourne la clé avec le plus de succès',
-            '    """'
-        ].join('\n');
-      } else if (question === 9) {
-        return [
-            'def find_k5_part2() -> int:',
-            '    """',
-            '    Trouve les 8 bits de k5 (masque 0xF0F0) en testant :',
-            '        1. Toutes les clés candidates 8 bits',
-            '        2. Pour chaque paire (C, C\') dans pairs-k5_000d_a0a0.txt, vérifie si C⊕k5 et C\'⊕k5 donnent le Δ attendu après S-box inverse',
-            '',
-            '    Retourne la clé avec le plus de succès',
-            '    """'
-        ].join('\n');
-      } else if (question === 12) {
-        return [
-            'def find_k4_part1() -> int:',
-            '    """',
-            '    Trouve 8 bits de k4 (masque 0x5555) en testant :',
-            '        1. Toutes les clés candidates 8 bits',
-            '        2. Pour chaque paire (C, C\') dans pairs-k4_0040_0606.txt,',
-            '           vérifie si C⊕k4 et C\'⊕k4 donnent Δ=0x0606 après S-box inverse',
-            '',
-            '    Retourne la clé avec le plus de succès',
-            '    """',
-            '',
-            '',
-            'def find_k4_part2() -> int:',
-            '    """',
-            '    Trouve 8 bits de k4 (masque 0xAAAA) en testant :',
-            '        1. Toutes les clés candidates 8 bits',
-            '        2. Pour chaque paire (C, C\') dans pairs-k4_0005_a0a0.txt,',
-            '           vérifie si C⊕k4 et C\'⊕k4 donnent Δ=0xA0A0 après S-box inverse',
-            '',
-            '    Retourne la clé avec le plus de succès',
-            '    """'
-        ].join('\n');
-      } else if (question === 14) {
-        return [
-            'def find_k3_part1() -> int:',
-            '    """',
-            '    Trouve 8 bits de k3 (masque 0x3333) en testant :',
-            '        1. Toutes les clés candidates 8 bits',
-            '        2. Pour chaque paire (C, C\') dans pairs-k3_0220_????.txt,',
-            '           vérifie si C⊕k3 et C\'⊕k3 donnent Δ attendu après S-box inverse',
-            '',
-            '    Retourne la clé avec le plus de succès',
-            '    """',
-            '',
-            '',
-            'def find_k3_part2() -> int:',
-            '    """',
-            '    Trouve 8 bits de k3 (masque 0xCCCC) en testant :',
-            '        1. Toutes les clés candidates 8 bits',
-            '        2. Pour chaque paire (C, C\') dans pairs-k3_1010_????.txt,',
-            '           vérifie si C⊕k3 et C\'⊕k3 donnent Δ attendu après S-box inverse',
-            '',
-            '    Retourne la clé avec le plus de succès',
-            '    """'
-        ].join('\n');
-      } else if (question === 15) {
-        return [
-            'def find_k2() -> int:',
-            '    """',
-            '    Trouve k2 complet (16 bits) en testant :',
-            '        1. Toutes les clés candidates 16 bits',
-            '        2. Pour un couple (M, C) connu, vérifie la cohérence du chiffrement',
-            '',
-            '    Retourne la clé validant le chiffrement',
-            '    """',
-            '',
-            '',
-            'def find_k1() -> int:',
-            '    """',
-            '    Trouve k1 (16 bits) après avoir obtenu k2 :',
-            '        1. Utilise le couple (M, C) connu',
-            '        2. Calcule k1 en inversant le chiffrement avec k2 déjà trouvé',
-            '',
-            '    Retourne la clé k1 complète',
-            '    """'
-        ].join('\n');
-      }
-      return '';
-    }
-    
-    async function submitCode(questionId) {
-      const code = editors[`q${questionId}`].getValue();
-      const blob = new Blob([code], { type: 'text/plain' });
-      const formData = new FormData();
-      formData.append("code", blob, `question${questionId}.py`);
-
-      const response = await fetch(`/submit_code/${questionId}`, {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await response.json();
-      const outputDiv = document.getElementById(`output-q${questionId}`);
-
-      if (result.error) {
-        outputDiv.innerHTML = `<pre class="error">${result.error}\n${result.details}</pre>`;
-      } else {
-        let html = `<pre>[Soumission OK]\n${result.message}\n${result.details}`;
-        if (result.stdout) html += `\n\n[Résultat]\n${result.stdout}`;
-        if (result.stderr) html += `\n\n[Erreur]\n${result.stderr}`;
-        html += `</pre>`;
-        outputDiv.innerHTML = html;
-
-        if (questionId === 4) {
-          fillProbabilityTable();
-        }
-      }
-    }
-
-    async function fillProbabilityTable() {
-        const response = await fetch('/get_probas');
-        const data = await response.json();
-
-        const rows = document.querySelectorAll("#table_1 tr");
-
-        for (let i = 2; i < rows.length; i++) {
-            const cells = rows[i].querySelectorAll("td");
-            const delta_in = i - 2;
-            for (let j = 0; j < 16; j++) {
-                cells[j].textContent = data[delta_in][j];
-            }
-        }
-    }
-
-    function validateInput(questionId, side = "default") {
-        let data = {};
-        
-        // Gestion spécifique pour chaque question
-        if (questionId === 5) {
-            // Logique existante pour la Q5 (tableau)
-            const inputs = document.querySelectorAll(`#table_2 input`);
-            data.deltaOut = {};
-            data.proba = {};
-            
-            inputs.forEach((input, index) => {
-                if (index < 16) {
-                    data.deltaOut[`val${index}`] = input.value.trim().toUpperCase();
-                } else {
-                    data.proba[`val${index-16}`] = input.value.trim();
-                }
-            });
-        } 
-        else if ([6, 7, 10, 11].includes(questionId)) {
-            const table = document.getElementById(`question-${questionId}-table`);
-            const proba = document.getElementById(`question-${questionId}-proba`);
-            const inputsTable = table ? Array.from(table.querySelectorAll('input')) : [];
-            const inputsProba = proba ? Array.from(proba.querySelectorAll('input')) : [];
-            const allInputs = [...inputsTable, ...inputsProba];
-
-            allInputs.forEach((input, index) => {
-                data[`val${index}`] = input.value.trim().toUpperCase();
-            });
-        }
-        else if (questionId === 13) {
-          const table = document.getElementById(`question-${questionId}-${side}-table`);
-          const proba = document.getElementById(`question-${questionId}-${side}-proba`);
-          const inputsTable = table ? Array.from(table.querySelectorAll('input')) : [];
-          const inputsProba = proba ? Array.from(proba.querySelectorAll('input')) : [];
-          const allInputs = [...inputsTable, ...inputsProba];
-
-          allInputs.forEach((input, index) => {
-              data[`val${index}`] = input.value.trim().toUpperCase();
-          });
-        }
-
-        const resultDiv = document.getElementById(`result-${questionId}${side !== 'default' ? '-' + side : ''}`);
-        resultDiv.innerHTML = '<i>Validation en cours...</i>';
-
-        fetch(`/validate_input/${questionId}/${side}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Erreur réseau');
-            return response.json();
-        })
-        .then(result => {
-            resultDiv.innerHTML = result.message;
-            resultDiv.className = result.result === "success" ? "success-message" : "error-message";
-            
-            if (result.details) {
-                highlightErrors(questionId, result.details, side);
-            }
-        })
-        .catch(error => {
-            resultDiv.innerHTML = `Erreur: ${error.message}`;
-            resultDiv.className = "error-message";
-        });
-    }
-
-    function highlightErrors(questionId, errorDetails, side) {
-        // Implémentation spécifique selon la question
-        if (questionId === 5) {
-            errorDetails.forEach(error => {
-                const input = document.querySelector(`#table_2 input:nth-child(${error.index + 1})`);
-                if (input) input.style.backgroundColor = "#ffdddd";
-            });
-        } 
-        else if ([6, 7, 10, 11].includes(questionId)) {
-            const table = document.querySelector(`#question-${questionId} table`);
-            errorDetails.forEach(error => {
-                const index = parseInt(error.field.replace('val', ''));
-                const input = table.querySelectorAll('input')[index];
-                if (input) input.style.backgroundColor = "#ffdddd";
-            });
-        }
-        else if (questionId === 13) {
-            const sideDiv = (side === 'left') ? 
-                document.querySelector('#question-13 > div:first-child') : 
-                document.querySelector('#question-13 > div:last-child');
-                
-            errorDetails.forEach(error => {
-                const index = parseInt(error.field.replace('val', ''));
-                const input = sideDiv.querySelectorAll('input')[index];
-                if (input) input.style.backgroundColor = "#ffdddd";
-            });
-        }
-    }
-  </script>
 </head>
 
 </html>
 
   <body>
-    <h1 style="text-align: center;">Cryptanalyse d'un blockcipher minimaliste</h1>
+    <header>
+        <h1 style="text-align: center;">Cryptanalyse d'un blockcipher minimaliste</h1>
+        <p class="promo-label">Promo : <b>{{ cohort.name }}</b></p>
+        <p>Bienvenue, {{ user.name }}</p>
+    </header>
+
+    <section>
+        <h3>Matériel cryptographique</h3>
+        <ul>
+        {% for m in materials %}
+            <li>
+                {{ m.filename }}
+                [<a href="{{ url_for('student.download_material', filename=m.filename) }}">Télécharger</a>]
+            </li>
+        {% else %}
+            <li>Aucun fichier de matériel n'a encore été généré.</li>
+        {% endfor %}
+        </ul>
+    </section>
 
     <section id="Introduction">
         <h2>Introduction</h2>
@@ -497,8 +105,8 @@
       </ul>
     <h3>Au travail</h3>
 
-    <div class="question">
-      <h3>Question 1</h3>
+    <div class="question-block">
+      <h3>Question 1 : encrypt_round (un round de chiffrement) et encrypt (chiffrement complet)</h3>
       <p>
         À l'aide des briques de bases qui vous sont données au début du fichier (définitions de la S-Box s et de la permutation perm), écrivez la fonction 
         encrypt_round qui calcule une étape (un round ) du blockcipher.<br><br>
@@ -508,19 +116,21 @@
           <li>application des S-Boxes sur chacun des quatre quartets du mot de 16 bits;</li>
           <li>s'il ne s'agit pas du dernier tour, application de la permutation.</li>
         </ul>
-        Ecrivez la fonction encrypt qui réalise le calcul complet du chiffrement par MiniCipher.<br><br>
-        Le chiffrement complet d'un bloc se déroule en 4 étapes (la dernière ne faisant pas intervenir de permutation), suivi de l'ajout (au sens XOR) de la 
-        dernière sous-clé.
       </p>
-      <div id="editor-container-q1" style="height: 700px; border: 1px solid #ccc;"></div>
-      <div class="action-buttons">
-          <button onclick="submitCode(1)">Soumettre</button>
-      </div>
-      <div id="output-q1" style="margin-top: 20px;"></div> 
+      <p>
+          Ecrivez la fonction encrypt qui réalise le calcul complet du chiffrement par MiniCipher.<br><br>
+          Le chiffrement complet d'un bloc se déroule en 4 étapes (la dernière ne faisant pas intervenir de permutation), suivi de l'ajout (au sens XOR) de la 
+          dernière sous-clé.<br><br>
+          Si vous souhaitez ici vérifier votre implémentation à l'aide de scripts, vous pouvez appeler le script de test avec le paramètre 0, à l'aide de la commande 
+          ./test-encryption.sh 0. Vous pourrez alors comparer votre résultat au fichier test-encryption.0.out.
+      </p>
+      <div id="editor-container-q1" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
+      <button id="submit-q1">Soumettre Question 1</button>
+      <pre id="feedback-q1" class="feedback"></pre>
     </div>
 
-    <div class="question">
-      <h3>Question 2</h3>
+    <div class="question-block">
+      <h3>Question 2 : decrypt (déchiffrement complet)</h3>
       <p>
         Ecrivez la fonction decrypt qui réalise le calcul complet du déchiffrement. Pour cela, vous réaliserez les fonctions suivantes :
       </p>
@@ -534,11 +144,9 @@
         test-decryption.0.out.<br><br>
         Enfin, vous pouvez faire des tests de chiffrement / déchiffrement à l'aide de ./test-identity.sh 0.
       </p>
-      <div id="editor-container-q2" style="height: 500px; border: 1px solid #ccc;"></div>
-      <div class="action-buttons">
-          <button onclick="submitCode(2)">Soumettre</button>
-      </div>
-      <div id="output-q2" style="margin-top: 20px;"></div>
+      <div id="editor-container-q2" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
+      <button id="submit-q2">Soumettre Question 2</button>
+      <pre id="feedback-q2" class="feedback"></pre>
     </div>
     </section>
 
@@ -632,22 +240,25 @@
               rowHeader.style.textAlign = "center";
               tr.appendChild(rowHeader);
           
-              // Cellules du milieu
+              // Cellules éditables (milieu)
               for (let col = 0; col < 16; col++) {
                 const td = document.createElement("td");
-                td.textContent = "0";
+                const input = document.createElement("input");
+                input.type = "text";
+                input.style.width = cellSize_1;
+                input.style.height = cellSize_1;
+                input.style.textAlign = "center";
+                input.style.border = "none";
                 td.style.border = "1px solid #999";
-                td.style.width = cellSize_1;
-                td.style.height = cellSize_1;
-                td.style.textAlign = "center";
                 td.style.backgroundColor = "#fff";
+                td.appendChild(input);
                 tr.appendChild(td);
               }
           
               table_1.appendChild(tr);
             }
         </script>
-        </div>
+        </div>        
         <div class="question">
           <h3>Question 5</h3>
           <p>
@@ -710,7 +321,7 @@
             table_2.appendChild(createInputRow("Proba"));
           </script>
           <div class="button-container">
-            <button class="validate-button" onclick="validateInput(5)">Valider</button>
+            <button onclick="validateInput(5)">Valider</button>
           </div>
           <div id="result-5" class="button-container"></div>        
         </div>
@@ -739,7 +350,7 @@
             En utilisant les probabilités calculées à la question précédente, donnez la probabilité, pour un couple de messages clairs (M, M ′ = M ⊕ 000d) que Delta−4 
             vaille effectivement a0a0.
           </p>
-          <table id="question-6-table" style="border-collapse: collapse; margin: 0 auto;">
+          <table style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
               <td style="border: 1px solid #999; padding: 6px;">000d</td>
@@ -766,24 +377,24 @@
   
           <div style="height: 20px;"></div>
         
-          <table id="question-6-proba" style="border-collapse: collapse; margin: 0 auto;">
+          <table style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
               <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
             </tr>
           </table>
-
           <div class="button-container">
-            <button class="validate-button" onclick="validateInput(6)">Valider</button>
+            <button onclick="validateInput(6)">Valider</button>
           </div>
           <div id="result-6" class="button-container"></div>
+          
         </div>
         <div class="question" id="question-7">
           <h3>Question 7</h3>
           <p>
             De la même manière, quelle est la probabilité du chemin différentiel de la figure 6 (Delta−1 = 0b00 ⇒ Delta−4 = 0606) ?
           </p>
-          <table id="question-7-table" style="border-collapse: collapse; margin: 0 auto;">
+          <table style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
               <td style="border: 1px solid #999; padding: 6px;">0b00</td>
@@ -810,7 +421,7 @@
   
           <div style="height: 20px;"></div>
         
-          <table id="question-7-proba" style="border-collapse: collapse; margin: 0 auto;">
+          <table style="border-collapse: collapse; margin: 0 auto;">
             <tr>
               <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
               <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -857,28 +468,17 @@
         récupérer la sous-clé k5.
       </p>
         <div class="question">
-        <h3>Question 8</h3>
+        <h3>Question 8 : Attaque différentielle, récupération de K5</h3>
         <p>
-          Ecrivez le code implémentant l'attaque pour le chemin différentiel 0b00 ⇒ 0606, et déduisez-en 8 bits de la sous-clé k5.<br><br>
-          Afin de vérifier votre travail, des paires supplémentaires ont été générées pour la clé nulle, et sont fournis dans le répertoire crypto-material-null-key.
+          Ecrivez le code implémentant l'attaque pour les chemins différentiels 0b00 ⇒ 0606 et 000d ⇒ a0a0, et déduisez-en 8 bits de la sous-clé k5, sur chacun de ces deux chemins différentiels respectivement.<br><br>
+          puis déduisez-en la sous-clé k5 complète.
         </p>
-        <div id="editor-container-q8" style="height: 500px; border: 1px solid #ccc;"></div>
-        <div class="action-buttons">
-            <button onclick="submitCode(8)">Soumettre</button>
+        <div id="editor-container-q8" style="height: 300px; border: 1px solid #ccc; resize: vertical; overflow:auto;"></div>
+        <button id="submit-q8">Soumettre</button>
+        <div id="output-q8" style="margin-top: 20px;"></div> 
+        <pre id="feedback-q8" class="feedback"></pre>    
         </div>
-        <div id="output-q8" style="margin-top: 20px;"></div>     
-        </div>
-        <div class="question">
-          <h3>Question 9</h3>
-          <p>
-            Recopiez le code précédent et adaptez-le pour le chemin différentiel 000d ⇒ a0a0, puis déduisez-en 8 bits de la sous-clé k5.
-          </p>
-          <div id="editor-container-q9" style="height: 300px; border: 1px solid #ccc;"></div>
-          <div class="action-buttons">
-              <button onclick="submitCode(9)">Soumettre</button>
-          </div>
-          <div id="output-q9" style="margin-top: 20px;"></div>         
-        </div>
+        
     </section>
 
     <section id="5. Troisième partie : cryptanalyse de la clé complète">
@@ -899,7 +499,7 @@
         <p>
           Détailler le chemin différentiel δ₁⁻ = 0040 ⇒ δ₃⁻ = 0606 et calculer sa probabilité.
         </p>
-        <table id="question-10-table" style="border-collapse: collapse; margin: 0 auto;">
+        <table style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
             <td style="border: 1px solid #999; padding: 6px;">0040</td>
@@ -920,7 +520,7 @@
 
         <div style="height: 20px;"></div>
       
-        <table id="question-10-proba" style="border-collapse: collapse; margin: 0 auto;">
+        <table style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
             <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -928,7 +528,7 @@
         </table>
         
         <div class="button-container">
-          <button class="validate-button" onclick="validateInput(10)">Valider</button>
+          <button onclick="validateInput(10)">Valider</button>
         </div>
         <div id="result-10" class="button-container"></div>        
       </div>
@@ -937,7 +537,7 @@
         <p>
           Détailler de même le chemin différentiel δ₁⁻ = 0005 ⇒ δ₃⁻ = a0a0 et calculer sa probabilité.
         </p>
-        <table id="question-11-table" style="border-collapse: collapse; margin: 0 auto;">
+        <table style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
             <td style="border: 1px solid #999; padding: 6px;">0005</td>
@@ -958,7 +558,7 @@
 
         <div style="height: 20px;"></div>
       
-        <table id="question-11-proba" style="border-collapse: collapse; margin: 0 auto;">
+        <table style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
             <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -966,7 +566,7 @@
         </table>
         
         <div class="button-container">
-          <button class="validate-button" onclick="validateInput(11)">Valider</button>
+          <button onclick="validateInput(11)">Valider</button>
         </div>
         <div id="result-11" class="button-container"></div>        
       </div>
@@ -995,7 +595,7 @@
           <!-- Bloc gauche : δ₁⁻ = 0220 -->
           <div style="border: none; padding: 20px; width: max-content;">
             <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 0220</h3>
-            <table id="question-13-left-table" style="border-collapse: collapse; margin: 0 auto;">
+            <table style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
                 <td style="border: 1px solid #999; padding: 6px;">0220</td>
@@ -1010,7 +610,7 @@
       
             <div style="height: 20px;"></div>
       
-            <table id="question-13-left-proba" style="border-collapse: collapse; margin: 0 auto;">
+            <table style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
                 <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -1018,7 +618,7 @@
             </table>
 
             <div class="button-container">
-              <button class="validate-button" onclick="validateInput(13, 'left')">Valider</button>
+              <button onclick="validateInput(13, 'left')">Valider</button>
             </div>
             <div id="result-13-left" class="button-container"></div>
           </div>
@@ -1026,7 +626,7 @@
           <!-- Bloc droite : δ₁⁻ = 1010 -->
           <div style="border: none; padding: 20px; width: max-content;">
             <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 1010</h3>
-            <table id="question-13-right-table" style="border-collapse: collapse; margin: 0 auto;">
+            <table style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
                 <td style="border: 1px solid #999; padding: 6px;">1010</td>
@@ -1041,7 +641,7 @@
       
             <div style="height: 20px;"></div>
       
-            <table id="question-13-right-proba" style="border-collapse: collapse; margin: 0 auto;">
+            <table style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
                 <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
@@ -1049,7 +649,7 @@
             </table>
 
             <div class="button-container">
-              <button class="validate-button" onclick="validateInput(13, 'right')">Valider</button>
+              <button onclick="validateInput(13, 'right')">Valider</button>
             </div>
             <div id="result-13-right" class="button-container"></div>
           </div>
@@ -1093,5 +693,10 @@
         </p>
       </div>
     </section>
+
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+
   </body>
+
 </html>

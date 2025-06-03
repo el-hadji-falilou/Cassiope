@@ -14,7 +14,7 @@ require(['vs/editor/editor.main'], function() {
             '    pass',
         ].join('\n'),
         language: 'python',
-        theme: 'vs-light',
+        theme: 'vs-dark',
         fontSize: 16,
         automaticLayout: true
     });
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     submitBtn.onclick = function() {
         const code = editor.getValue();
-        feedbackZone.textContent = "Envoi du code...";
+        feedbackZone.textContent = "Correction en cours...";
         fetch('/tp/submit_code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

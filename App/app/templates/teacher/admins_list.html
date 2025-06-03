@@ -1,0 +1,34 @@
+{% extends "teacher/dashboard.html" %}
+
+{% block content %}
+<h2>Liste des enseignants</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for admin in admins %}
+        <tr>
+            <td>{{ admin.id }}</td>
+            <td>{{ admin.name }}</td>
+            <td>{{ admin.email }}</td>
+            <td>
+                {% if admin.id != current_user.id %}
+                <form action="{{ url_for('teacher.delete_admin', admin_id=admin.id) }}" method="post" style="display:inline;">
+                    <button onclick="return confirm('Supprimer cet enseignant ?');">🗑️ Supprimer</button>
+                </form>
+                {% else %}
+                (vous)
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('teacher.dashboard') }}">⬅️ Retour au dashboard</a>
+{% endblock %}

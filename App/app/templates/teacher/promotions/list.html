@@ -2,7 +2,7 @@
 
 {% block content %}
   <h2>Promotions</h2>
-  <a href="{{ url_for('admin_promotions.new_promotion') }}">+ Nouvelle promotion</a>
+  <a href="{{ url_for('admin_promotions.new_promotion') }}">➕ Nouvelle promotion</a>
   <ul>
     {% for c in cohorts %}
       <li>
@@ -18,4 +18,5 @@
     {% endfor %}
   </ul>
   
-{% endblock %}
+{% endblock content %}
+

@@ -45,3 +45,20 @@ class CryptoMaterial(db.Model):
     delta_out   = db.Column(db.String(64), nullable=True)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
     cohort      = db.relationship('Cohort', back_populates='materials')
+    
+class ValidatedCode(db.Model):
+    __tablename__ = 'validated_codes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    part = db.Column(db.String(32), nullable=False)  # 'decrypt', 'decrypt_round', etc.
+    code_text = db.Column(db.Text, nullable=False)
+    validated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='validated_codes')
+
+class Submission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    question = db.Column(db.String(10), nullable=False)  # "Q1", "Q2", ...
+    status = db.Column(db.String(16), default="pending") # "pending", "done", "failed"
+    # ... (timestamp, feedback, etc.)
