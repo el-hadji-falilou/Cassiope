@@ -17,13 +17,13 @@ def create_app():
     else:
         app.config.from_object('config.DevelopmentConfig')
 
-    # init extensions
+    # initialisation des extensions
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
 
-    # ensure folders
+    # Création des répertoires nécessaires
     os.makedirs(app.config['SUBMISSIONS_FOLDER'], exist_ok=True)
     os.makedirs(app.config['CRYPTO_FOLDER'], exist_ok=True)
 
