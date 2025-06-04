@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV '/home/endiaye/TSP/2A/Cassiopé/Cassiope/App/venv'
+set -gx VIRTUAL_ENV '/home/tsafack/Documents/2A TSP/Cassiope-git/App/venv'
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH

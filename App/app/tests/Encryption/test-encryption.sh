@@ -53,6 +53,8 @@ done
 
 if diff -q <(grep -v '^$' response-encryption.0.txt) <(grep -v '^$' test-encryption.0.txt) > /dev/null 2>&1; then
     echo "SUCCESS"
+    exit 0
 else
     echo "FAILED"
+    exit 1
 fi

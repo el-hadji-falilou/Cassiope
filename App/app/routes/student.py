@@ -117,15 +117,18 @@ def submit_code(question_id):
             stderr=subprocess.PIPE,
             text=True
         )
-
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, chiffrement correct !" if test_passed
+                else "❌ Erreur : le chiffrement n'est pas correct."
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
+
 
     if question_id == 2:
         print("[DEBUG] Running Docker for Q2")
@@ -166,14 +169,17 @@ def submit_code(question_id):
             text=True
         )
 
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, déchiffrement correct !" if test_passed
+                else "❌ Erreur : le déchiffrement n'est pas correct."
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
+
     
     if question_id == 8:
         print("[DEBUG] Running Docker for Q8")
