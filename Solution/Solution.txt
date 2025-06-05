@@ -1,12 +1,11 @@
 def init_inverse_ops():
-    # Calcul de l'inverse de la S-Box
-    for i in range(16):
-        s_inv[s[i]] = i
+     # Calcul de l'inverse de la S-Box
+     for i in range(16):
+          s_inv[s[i]] = i
     
-    # Calcul de l'inverse de la permutation
-    for i in range(16):
-        perm_inv[perm[i]] = i
-
+     # Calcul de l'inverse de la permutation
+     for i in range(16):
+          perm_inv[perm[i]] = i
 
 def encrypt_round(input, key, do_perm):
      # Étape 1 : Ou exclusif avec la sous-clé (XOR)

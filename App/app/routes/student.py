@@ -129,7 +129,6 @@ def submit_code(question_id):
             "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
 
-
     if question_id == 2:
         print("[DEBUG] Running Docker for Q2")
 
@@ -218,13 +217,15 @@ def submit_code(question_id):
             text=True
         )
 
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, vous avez trouvé la partie 1 de la clé K5 !" if test_passed
+                else "❌ Erreur : vous ne trouvez pas la bonne clé !"
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
     
     if question_id == 9:
@@ -263,14 +264,16 @@ def submit_code(question_id):
             stderr=subprocess.PIPE,
             text=True
         )
-
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+    
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, vous avez trouvé la partie 2 de la clé K5 !" if test_passed
+                else "❌ Erreur : vous ne trouvez pas la bonne clé !"
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
     
     if question_id == 12:
@@ -310,13 +313,15 @@ def submit_code(question_id):
             text=True
         )
 
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, vous avez trouvé la clé K4 !" if test_passed
+                else "❌ Erreur : vous ne trouvez pas la bonne clé !"
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
     
     if question_id == 14:
@@ -356,13 +361,15 @@ def submit_code(question_id):
             text=True
         )
 
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, vous avez touvé la clé K3 !" if test_passed
+                else "❌ Erreur : vous ne trouver pas la bonne clé !"
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
     
     if question_id == 15:
@@ -401,14 +408,16 @@ def submit_code(question_id):
             stderr=subprocess.PIPE,
             text=True
         )
-
-        test_passed = "SUCCESS" in test_result.stdout
-        print(f"[DEBUG] Docker run output:\n{test_passed}")
+    
+        test_passed = "SUCCESS" in test_result.stdout and test_result.returncode == 0
         return jsonify({
             "status": "SUCCESS" if test_passed else "FAILED",
-            "message": "Test submitted and executed",
+            "message": (
+                "✅ Bravo, vous avez trouvé les clés K1 et K2 !" if test_passed
+                else "❌ Erreur : vous ne trouvé pas les bonnes clés !"
+            ),
             "result": "SUCCESS" if test_passed else "FAILED",
-            "details": test_result.stdout
+            "details": test_result.stdout + ("\n" + test_result.stderr if test_result.stderr else "")
         })
 
     return jsonify({
@@ -511,7 +520,7 @@ def validate_input(question_id, side):
         if not errors:
             return jsonify({
                 "result": "success",
-                "message": "Toutes les valeurs sont correctes!",
+                "message": "Toutes les valeurs sont correctes !",
                 "details": []
             })
         else:
@@ -536,13 +545,13 @@ def validate_input(question_id, side):
         if not errors:
             return jsonify({
                 "result": "success",
-                "message": "Toutes les valeurs sont correctes!",
+                "message": "Toutes les valeurs sont correctes !",
                 "details": []
             })
         else:
             return jsonify({
                 "result": "partial",
-                "message": "Réponses correctes",
+                "message": "Une ou plusieurs valeurs sont incorrectes !",
                 "details": errors
             })
         
@@ -561,13 +570,13 @@ def validate_input(question_id, side):
         if not errors:
             return jsonify({
                 "result": "success",
-                "message": "Toutes les valeurs sont correctes!",
+                "message": "Toutes les valeurs sont correctes !",
                 "details": []
             })
         else:
             return jsonify({
                 "result": "partial",
-                "message": "Réponses correctes",
+                "message": "Une ou plusieurs valeurs sont incorrectes !",
                 "details": errors
             })
         
@@ -586,13 +595,13 @@ def validate_input(question_id, side):
         if not errors:
             return jsonify({
                 "result": "success",
-                "message": "Toutes les valeurs sont correctes!",
+                "message": "Toutes les valeurs sont correctes !",
                 "details": []
             })
         else:
             return jsonify({
                 "result": "partial",
-                "message": "Réponses correctes",
+                "message": "Une ou plusieurs valeurs sont incorrectes !",
                 "details": errors
             })
         
@@ -611,13 +620,13 @@ def validate_input(question_id, side):
         if not errors:
             return jsonify({
                 "result": "success",
-                "message": "Toutes les valeurs sont correctes!",
+                "message": "Toutes les valeurs sont correctes !",
                 "details": []
             })
         else:
             return jsonify({
                 "result": "partial",
-                "message": "Réponses correctes",
+                "message": "Une ou plusieurs valeurs sont incorrectes !",
                 "details": errors
             })
         
@@ -636,12 +645,12 @@ def validate_input(question_id, side):
         if not errors:
             return jsonify({
                 "result": "success",
-                "message": "Toutes les valeurs sont correctes!",
+                "message": "Toutes les valeurs sont correctes !",
                 "details": []
             })
         else:
             return jsonify({
                 "result": "partial",
-                "message": "Réponses correctes",
+                "message": "Une ou plusieurs valeurs sont incorrectes !",
                 "details": errors
             })

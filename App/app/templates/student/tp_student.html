@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cryptanalyse d'un blockcipher minimaliste - Promo {{ cohort.name }}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptanalyse d'un blockcipher minimaliste - Promo {{ cohort.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-</head>
-
-</html>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+  </head>
 
   <body>
     <header>
@@ -125,10 +125,11 @@
           ./test-encryption.sh 0. Vous pourrez alors comparer votre résultat au fichier test-encryption.0.out.
       </p>
       <div id="editor-container-q1" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
-      <button id="submit-q1">Soumettre Question 1</button>
+      <div class="action-buttons">
+          <button onclick="submitCode(1)">Soumettre</button>
+      </div>
       <pre id="feedback-q1" class="feedback"></pre>
       <pre id="details-q1" style="background:#f8f8f8;font-size:0.95em;margin-top:0.5em;"></pre>
-
     </div>
 
     <div class="question-block">
@@ -147,7 +148,9 @@
         Enfin, vous pouvez faire des tests de chiffrement / déchiffrement à l'aide de ./test-identity.sh 0.
       </p>
       <div id="editor-container-q2" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
-      <button id="submit-q2">Soumettre Question 2</button>
+      <div class="action-buttons">
+          <button onclick="submitCode(2)">Soumettre</button>
+      </div>
       <pre id="feedback-q2" class="feedback"></pre>
       <pre id="details-q2" style="background:#f8f8f8;font-size:0.95em;margin-top:0.5em;"></pre>
     </div>
@@ -162,172 +165,172 @@
         Soit x ∈ [0..15]. On s'intéresse à la probabilité qu'une différence (au sens XOR) δin sur x implique une différence δout sur S(x), i.e. P (δin ⇒ δout) = 
         Px∈[0..15] [S(x) ⊕ S(x ⊕ δin) = δout]
       </p>
-        <div class="question">
-          <h3>Question 4</h3>
-          <p>
-            Etablissez le tableau des probabilités P (δin ⇒ δout) pour toutes les valeurs de δin et δout.<br><br>
-            Il est bien entendu conseillé de calculer ce tableau avec quelques lignes de code. Pour cela, vous pourrez utiliser les squelettes donnés dans le 
-            répertoire part2.
-          </p>
-          <div id="editor-container-q4" style="height: 300px; border: 1px solid #ccc;"></div>
-          <div class="action-buttons">
-              <button onclick="submitCode(4)">Soumettre</button>
-          </div>
-          <div id="output-q4" style="margin-top: 20px;"></div>
-          <table id="table_1" style="border-collapse: collapse; margin: 0 auto;">
-            <!-- Le tableau sera généré en JavaScript -->
-          </table>
-          <script>
-            const table_1 = document.getElementById("table_1");
-            const cellSize_1 = "30px";
-          
-            // Ligne 0 : coin vide + "δout"
-            const titleRow = document.createElement("tr");
-          
-            const topLeftCorner = document.createElement("th");
-            topLeftCorner.setAttribute("rowspan", "2");
-            topLeftCorner.setAttribute("colspan", "2");
-            topLeftCorner.style.border = "none";
-            titleRow.appendChild(topLeftCorner);
-          
-            const deltaOutHeader = document.createElement("th");
-            deltaOutHeader.setAttribute("colspan", "16");
-            deltaOutHeader.textContent = "δout";
-            deltaOutHeader.style.border = "1px solid #999";
-            deltaOutHeader.style.height = cellSize_1;
-            deltaOutHeader.style.backgroundColor = "#eee";
-            titleRow.appendChild(deltaOutHeader);
-          
-            table_1.appendChild(titleRow);
-          
-            // Ligne 1 : entêtes δout (0 à F)
-            const headerRow = document.createElement("tr");
-            for (let col = 0; col < 16; col++) {
-              const th = document.createElement("th");
-              th.textContent = col.toString(16).toUpperCase();
-              th.style.border = "1px solid #999";
-              th.style.width = cellSize_1;
-              th.style.height = cellSize_1;
-              th.style.backgroundColor = "#eee";
-              th.style.textAlign = "center";
-              headerRow.appendChild(th);
-            }
-            table_1.appendChild(headerRow);
-          
-            // Lignes suivantes : δin + données
-            for (let row = 0; row < 16; row++) {
-              const tr = document.createElement("tr");
-          
-              if (row === 0) {
-                // Ajoute la colonne "δin" fusionnée verticalement
-                const deltaInHeader = document.createElement("th");
-                deltaInHeader.setAttribute("rowspan", "16");
-                deltaInHeader.textContent = "δin";
-                deltaInHeader.style.border = "1px solid #999";
-                deltaInHeader.style.width = cellSize_1;
-                deltaInHeader.style.backgroundColor = "#eee";
-                deltaInHeader.style.writingMode = "vertical-rl";
-                deltaInHeader.style.textAlign = "center";
-                deltaInHeader.style.verticalAlign = "middle";
-                deltaInHeader.style.padding = "4px";
-                tr.appendChild(deltaInHeader);
-              }
-          
-              // Entête ligne δin
-              const rowHeader = document.createElement("th");
-              rowHeader.textContent = row.toString(16).toUpperCase();
-              rowHeader.style.border = "1px solid #999";
-              rowHeader.style.width = cellSize_1;
-              rowHeader.style.height = cellSize_1;
-              rowHeader.style.backgroundColor = "#eee";
-              rowHeader.style.textAlign = "center";
-              tr.appendChild(rowHeader);
-          
-              // Cellules éditables (milieu)
-              for (let col = 0; col < 16; col++) {
-                const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.style.width = cellSize_1;
-                input.style.height = cellSize_1;
-                input.style.textAlign = "center";
-                input.style.border = "none";
-                td.style.border = "1px solid #999";
-                td.style.backgroundColor = "#fff";
-                td.appendChild(input);
-                tr.appendChild(td);
-              }
-          
-              table_1.appendChild(tr);
-            }
-        </script>
-        </div>        
-        <div class="question">
-          <h3>Question 5</h3>
-          <p>
-            En déduire les probabilités les plus intéressantes pour un chemin différentiel, c'est-à-dire les plus grandes.
-          </p>
-          <table id="table_2" style="border-collapse: collapse; margin: 0 auto;">
-            <!-- Le tableau sera généré en JavaScript -->
-          </table>
-          <script>
-            const table_2 = document.getElementById("table_2");
-            const cellWidth_2 = "50px";
-            const cellHeight_2 = "30px";
 
-            // Helper function to create a styled table header cell
-            function createHeaderCell(text) {
-              const th = document.createElement("th");
-              th.textContent = text;
-              th.style.border = "1px solid #999";
-              th.style.width = cellWidth_2;
-              th.style.height = cellHeight_2;
-              th.style.backgroundColor = "#eee";
-              th.style.textAlign = "center";
-              return th;
-            }
-          
-            // Helper function to create a row with input fields
-            function createInputRow(labelText) {
-              const tr = document.createElement("tr");
-              const th = createHeaderCell(labelText);
-              tr.appendChild(th);
-          
-              for (let j = 0; j < 16; j++) {
-                const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.style.width = cellWidth_2;
-                input.style.height = cellHeight_2;
-                input.style.textAlign = "center";
-                input.style.border = "none";
-                td.style.border = "1px solid #999";
-                td.appendChild(input);
-                tr.appendChild(td);
-              }
-          
-              return tr;
-            }
-          
-            // Create header row
-            const header = document.createElement("tr");
-            const headerLabels = ["δin", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
-            headerLabels.forEach(label => {
-              header.appendChild(createHeaderCell(label));
-            });
-            table_2.appendChild(header);
-          
-            // Append δout input row
-            table_2.appendChild(createInputRow("δout"));
-          
-            // Append Proba input row
-            table_2.appendChild(createInputRow("Proba"));
-          </script>
-          <div class="button-container">
-            <button onclick="validateInput(5)">Valider</button>
-          </div>
-          <div id="result-5" class="button-container"></div>        
+      <div class="question">
+        <h3>Question 4</h3>
+        <p>
+          Etablissez le tableau des probabilités P (δin ⇒ δout) pour toutes les valeurs de δin et δout.<br><br>
+          Il est bien entendu conseillé de calculer ce tableau avec quelques lignes de code. Pour cela, vous pourrez utiliser les squelettes donnés dans le 
+          répertoire part2.
+        </p>
+        <div id="editor-container-q4" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div class="action-buttons">
+            <button onclick="computeProba()">Soumettre</button>
         </div>
+        <div id="output-q4" style="margin-top: 20px;"></div>
+        <table id="table_1" style="border-collapse: collapse; margin: 0 auto;">
+          <!-- Le tableau sera généré en JavaScript -->
+        </table>
+        <script>
+          const table_1 = document.getElementById("table_1");
+          const cellSize_1 = "30px";
+        
+          // Ligne 0 : coin vide + "δout"
+          const titleRow = document.createElement("tr");
+        
+          const topLeftCorner = document.createElement("th");
+          topLeftCorner.setAttribute("rowspan", "2");
+          topLeftCorner.setAttribute("colspan", "2");
+          topLeftCorner.style.border = "none";
+          titleRow.appendChild(topLeftCorner);
+        
+          const deltaOutHeader = document.createElement("th");
+          deltaOutHeader.setAttribute("colspan", "16");
+          deltaOutHeader.textContent = "δout";
+          deltaOutHeader.style.border = "1px solid #999";
+          deltaOutHeader.style.height = cellSize_1;
+          deltaOutHeader.style.backgroundColor = "#eee";
+          titleRow.appendChild(deltaOutHeader);
+        
+          table_1.appendChild(titleRow);
+        
+          // Ligne 1 : entêtes δout (0 à F)
+          const headerRow = document.createElement("tr");
+          for (let col = 0; col < 16; col++) {
+            const th = document.createElement("th");
+            th.textContent = col.toString(16).toUpperCase();
+            th.style.border = "1px solid #999";
+            th.style.width = cellSize_1;
+            th.style.height = cellSize_1;
+            th.style.backgroundColor = "#eee";
+            th.style.textAlign = "center";
+            headerRow.appendChild(th);
+          }
+          table_1.appendChild(headerRow);
+        
+          // Lignes suivantes : δin + données
+          for (let row = 0; row < 16; row++) {
+            const tr = document.createElement("tr");
+        
+            if (row === 0) {
+              // Ajoute la colonne "δin" fusionnée verticalement
+              const deltaInHeader = document.createElement("th");
+              deltaInHeader.setAttribute("rowspan", "16");
+              deltaInHeader.textContent = "δin";
+              deltaInHeader.style.border = "1px solid #999";
+              deltaInHeader.style.width = cellSize_1;
+              deltaInHeader.style.backgroundColor = "#eee";
+              deltaInHeader.style.writingMode = "vertical-rl";
+              deltaInHeader.style.textAlign = "center";
+              deltaInHeader.style.verticalAlign = "middle";
+              deltaInHeader.style.padding = "4px";
+              tr.appendChild(deltaInHeader);
+            }
+        
+            // Entête ligne δin
+            const rowHeader = document.createElement("th");
+            rowHeader.textContent = row.toString(16).toUpperCase();
+            rowHeader.style.border = "1px solid #999";
+            rowHeader.style.width = cellSize_1;
+            rowHeader.style.height = cellSize_1;
+            rowHeader.style.backgroundColor = "#eee";
+            rowHeader.style.textAlign = "center";
+            tr.appendChild(rowHeader);
+        
+            // Cellules du milieu
+            for (let col = 0; col < 16; col++) {
+              const td = document.createElement("td");
+              td.textContent = "0";
+              td.style.border = "1px solid #999";
+              td.style.width = cellSize_1;
+              td.style.height = cellSize_1;
+              td.style.textAlign = "center";
+              td.style.backgroundColor = "#fff";
+              tr.appendChild(td);
+            }
+        
+            table_1.appendChild(tr);
+          }
+      </script>
+      </div>
+      
+      <div class="question">
+        <h3>Question 5</h3>
+        <p>
+          En déduire les probabilités les plus intéressantes pour un chemin différentiel, c'est-à-dire les plus grandes.
+        </p>
+        <table id="table_2" style="border-collapse: collapse; margin: 0 auto;">
+          <!-- Le tableau sera généré en JavaScript -->
+        </table>
+        <script>
+          const table_2 = document.getElementById("table_2");
+          const cellWidth_2 = "50px";
+          const cellHeight_2 = "30px";
+
+          // Helper function to create a styled table header cell
+          function createHeaderCell(text) {
+            const th = document.createElement("th");
+            th.textContent = text;
+            th.style.border = "1px solid #999";
+            th.style.width = cellWidth_2;
+            th.style.height = cellHeight_2;
+            th.style.backgroundColor = "#eee";
+            th.style.textAlign = "center";
+            return th;
+          }
+        
+          // Helper function to create a row with input fields
+          function createInputRow(labelText) {
+            const tr = document.createElement("tr");
+            const th = createHeaderCell(labelText);
+            tr.appendChild(th);
+        
+            for (let j = 0; j < 16; j++) {
+              const td = document.createElement("td");
+              const input = document.createElement("input");
+              input.type = "text";
+              input.style.width = cellWidth_2;
+              input.style.height = cellHeight_2;
+              input.style.textAlign = "center";
+              input.style.border = "none";
+              td.style.border = "1px solid #999";
+              td.appendChild(input);
+              tr.appendChild(td);
+            }
+        
+            return tr;
+          }
+        
+          // Create header row
+          const header = document.createElement("tr");
+          const headerLabels = ["δin", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+          headerLabels.forEach(label => {
+            header.appendChild(createHeaderCell(label));
+          });
+          table_2.appendChild(header);
+        
+          // Append δout input row
+          table_2.appendChild(createInputRow("δout"));
+        
+          // Append Proba input row
+          table_2.appendChild(createInputRow("Proba"));
+        </script>
+        <div class="action-buttons">
+          <button onclick="validateInput(5)">Valider</button>
+        </div>
+        <div id="result-5" class="button-container"></div>        
+      </div>
+
       <h3>Etablissement d'un chemin différentiel</h3>
       <p>
         On propose de s'intéresser au chemin différentiel suivant :
@@ -347,95 +350,97 @@
         "fils" ou que l'on ajoute les sous-clés, le comportement est linéaire, et la probabilité que tout se passe comme décrit sur la figure est 1. En revanche, il 
         faut utiliser les probabilités calculées à la question précédente pour connaître le comportement de ce chemin différentiel à travers les S-boxes.
       </p>
-        <div class="question" id="question-6">
-          <h3>Question 6</h3>
-          <p>
-            En utilisant les probabilités calculées à la question précédente, donnez la probabilité, pour un couple de messages clairs (M, M ′ = M ⊕ 000d) que Delta−4 
-            vaille effectivement a0a0.
-          </p>
-          <table style="border-collapse: collapse; margin: 0 auto;">
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999; padding: 6px;">000d</td>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>4</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999;">a0a0</td>
-            </tr>
-          </table>
-  
-          <div style="height: 20px;"></div>
-        
-          <table style="border-collapse: collapse; margin: 0 auto;">
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
-            </tr>
-          </table>
-          <div class="button-container">
-            <button onclick="validateInput(6)">Valider</button>
-          </div>
-          <div id="result-6" class="button-container"></div>
-          
+
+      <div class="question" id="question-6">
+        <h3>Question 6</h3>
+        <p>
+          En utilisant les probabilités calculées à la question précédente, donnez la probabilité, pour un couple de messages clairs (M, M ′ = M ⊕ 000d) que Delta−4 
+          vaille effectivement a0a0.
+        </p>
+        <table id="question-6-table" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">000d</td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>4</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;">a0a0</td>
+          </tr>
+        </table>
+
+        <div style="height: 20px;"></div>
+      
+        <table id="question-6-proba" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+          </tr>
+        </table>
+
+        <div class="action-buttons">
+          <button class="validate-button" onclick="validateInput(6)">Valider</button>
         </div>
-        <div class="question" id="question-7">
-          <h3>Question 7</h3>
-          <p>
-            De la même manière, quelle est la probabilité du chemin différentiel de la figure 6 (Delta−1 = 0b00 ⇒ Delta−4 = 0606) ?
-          </p>
-          <table style="border-collapse: collapse; margin: 0 auto;">
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999; padding: 6px;">0b00</td>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
-            </tr>
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>4</sub><sup>−</sup> =</td>
-              <td style="border: 1px solid #999;">0606</td>
-            </tr>
-          </table>
-  
-          <div style="height: 20px;"></div>
+        <div id="result-6" class="button-container"></div>
+      </div>
+      <div class="question" id="question-7">
+        <h3>Question 7</h3>
+        <p>
+          De la même manière, quelle est la probabilité du chemin différentiel de la figure 6 (Delta−1 = 0b00 ⇒ Delta−4 = 0606) ?
+        </p>
+        <table id="question-7-table" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999; padding: 6px;">0b00</td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>2</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>3</sub><sup>+</sup> =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 80px; text-align: center;"></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>4</sub><sup>−</sup> =</td>
+            <td style="border: 1px solid #999;">0606</td>
+          </tr>
+        </table>
+
+        <div style="height: 20px;"></div>
+      
+        <table id="question-7-proba" style="border-collapse: collapse; margin: 0 auto;">
+          <tr>
+            <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
+            <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
+          </tr>
+        </table>
         
-          <table style="border-collapse: collapse; margin: 0 auto;">
-            <tr>
-              <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
-              <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
-            </tr>
-          </table>
-          
-          <div class="button-container">
-              <button class="validate-button" onclick="validateInput(7)">Valider</button>
-          </div>
-          <div id="result-7" class="result-container"></div>
+        <div class="action-buttons">
+            <button class="validate-button" onclick="validateInput(7)">Valider</button>
         </div>
+        <div id="result-7" class="result-container"></div>
+      </div>
+
       <h3>Récupération du second texte à trous, et des couples de chiffrés</h3>
       <p>
         À présent, nous allons utiliser les chemins différentiels précédents pour récupérer la dernière sous-clé k5.<br><br>
@@ -476,10 +481,12 @@
           Ecrivez le code implémentant l'attaque pour les chemins différentiels 0b00 ⇒ 0606 et 000d ⇒ a0a0, et déduisez-en 8 bits de la sous-clé k5, sur chacun de ces deux chemins différentiels respectivement.<br><br>
           puis déduisez-en la sous-clé k5 complète.
         </p>
-        <div id="editor-container-q8" style="height: 300px; border: 1px solid #ccc; resize: vertical; overflow:auto;"></div>
-        <button id="submit-q8">Soumettre</button>
-        <div id="output-q8" style="margin-top: 20px;"></div> 
-        <pre id="feedback-q8" class="feedback"></pre>    
+        <div id="editor-container-q8" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
+        <div class="action-buttons">
+            <button onclick="submitCode(8)">Soumettre</button>
+        </div>
+        <pre id="feedback-q8" class="feedback"></pre>
+        <pre id="details-q8" style="background:#f8f8f8;font-size:0.95em;margin-top:0.5em;"></pre>
         </div>
         
     </section>
@@ -502,7 +509,7 @@
         <p>
           Détailler le chemin différentiel δ₁⁻ = 0040 ⇒ δ₃⁻ = 0606 et calculer sa probabilité.
         </p>
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-10-table" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
             <td style="border: 1px solid #999; padding: 6px;">0040</td>
@@ -523,24 +530,24 @@
 
         <div style="height: 20px;"></div>
       
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-10-proba" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
             <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
           </tr>
         </table>
         
-        <div class="button-container">
+        <div class="action-buttons">
           <button onclick="validateInput(10)">Valider</button>
         </div>
-        <div id="result-10" class="button-container"></div>        
+        <div id="result-10" class="action-buttons"></div>        
       </div>
       <div class="question" id="question-11">
         <h3>Question 11</h3>
         <p>
           Détailler de même le chemin différentiel δ₁⁻ = 0005 ⇒ δ₃⁻ = a0a0 et calculer sa probabilité.
         </p>
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-11-table" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
             <td style="border: 1px solid #999; padding: 6px;">0005</td>
@@ -561,32 +568,34 @@
 
         <div style="height: 20px;"></div>
       
-        <table style="border-collapse: collapse; margin: 0 auto;">
+        <table id="question-11-proba" style="border-collapse: collapse; margin: 0 auto;">
           <tr>
             <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
             <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
           </tr>
         </table>
         
-        <div class="button-container">
+        <div class="action-buttons">
           <button onclick="validateInput(11)">Valider</button>
         </div>
-        <div id="result-11" class="button-container"></div>        
+        <div id="result-11" class="action-buttons"></div>        
       </div>
       <div class="question">
         <h3>Question 12</h3>
         <p>
           En vous inspirant du code précédent, exploitez les chemins précedents pour k4.
         </p>
-        <div id="editor-container-q12" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div id="editor-container-q12" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
         <div class="action-buttons">
             <button onclick="submitCode(12)">Soumettre</button>
         </div>
-        <div id="output-q12" style="margin-top: 20px;"></div>
+        <pre id="feedback-q12" class="feedback"></pre>
+        <pre id="details-q12" style="background:#f8f8f8;font-size:0.95em;margin-top:0.5em;"></pre>
       </div>
       <p>
         Le répertoire crypto-material contient en particulier des fichiers pairs-* contenant le contenu nécessaire aux attaques de cette partie.
       </p>
+
       <div class="question" id="question-13">
         <h3>Question 13</h3>
         <p>
@@ -598,7 +607,7 @@
           <!-- Bloc gauche : δ₁⁻ = 0220 -->
           <div style="border: none; padding: 20px; width: max-content;">
             <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 0220</h3>
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-left-table" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
                 <td style="border: 1px solid #999; padding: 6px;">0220</td>
@@ -613,14 +622,14 @@
       
             <div style="height: 20px;"></div>
       
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-left-proba" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
                 <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
               </tr>
             </table>
 
-            <div class="button-container">
+            <div class="action-buttons">
               <button onclick="validateInput(13, 'left')">Valider</button>
             </div>
             <div id="result-13-left" class="button-container"></div>
@@ -629,7 +638,7 @@
           <!-- Bloc droite : δ₁⁻ = 1010 -->
           <div style="border: none; padding: 20px; width: max-content;">
             <h3>Chemin différentiel : δ<sub>1</sub><sup>−</sup> = 1010</h3>
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-right-table" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee;">δ<sub>1</sub><sup>−</sup> =</td>
                 <td style="border: 1px solid #999; padding: 6px;">1010</td>
@@ -644,14 +653,14 @@
       
             <div style="height: 20px;"></div>
       
-            <table style="border-collapse: collapse; margin: 0 auto;">
+            <table id="question-13-right-proba" style="border-collapse: collapse; margin: 0 auto;">
               <tr>
                 <td style="border: 1px solid #999; padding: 6px; background-color: #eee; text-align: right;">Proba =</td>
                 <td style="border: 1px solid #999;"><input type="text" style="width: 100px; text-align: center;"></td>
               </tr>
             </table>
 
-            <div class="button-container">
+            <div class="action-buttons">
               <button onclick="validateInput(13, 'right')">Valider</button>
             </div>
             <div id="result-13-right" class="button-container"></div>
@@ -665,11 +674,12 @@
           À l'aide des chemins différentiels trouvés et des variables intitulées pairs_k3_delta_in_0220 et pairs_k3_delta_in_1010, adaptez le code de calcul de la 
           sous-clé k4 pour retrouver k3.
         </p>
-        <div id="editor-container-q14" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div id="editor-container-q14" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
         <div class="action-buttons">
             <button onclick="submitCode(14)">Soumettre</button>
         </div>
-        <div id="output-q14" style="margin-top: 20px;"></div>
+        <pre id="feedback-q14" class="feedback"></pre>
+        <pre id="details-q14" style="background:#f8f8f8;font-size:0.95em;margin-top:0.5em;"></pre>
       </div>
       <h3>Récupération des sous-clés 2 et 1</h3>
       <div class="question">
@@ -682,11 +692,12 @@
             <li>Enfin, k1 se retrouve à l'aide d'un simple couple clair/chiffré, puisqu'on peut remonter tout le reste de la fonction de déchiffrement.</li>
           </ul>
         </p>
-        <div id="editor-container-q15" style="height: 300px; border: 1px solid #ccc;"></div>
+        <div id="editor-container-q15" style="height:200px;border:1px solid #ccc; resize: vertical; overflow: auto;"></div>
         <div class="action-buttons">
             <button onclick="submitCode(15)">Soumettre</button>
         </div>
-        <div id="output-q15" style="margin-top: 20px;"></div>
+        <pre id="feedback-q15" class="feedback"></pre>
+        <pre id="details-q15" style="background:#f8f8f8;font-size:0.95em;margin-top:0.5em;"></pre>
       </div>
       <h3>Déchiffrement du message donné à votre groupe.</h3>
       <div class="question">
@@ -696,10 +707,5 @@
         </p>
       </div>
     </section>
-
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-<script src="{{ url_for('static', filename='main.js') }}"></script>
-
   </body>
-
 </html>

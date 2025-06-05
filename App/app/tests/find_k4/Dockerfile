@@ -9,6 +9,7 @@ COPY entrypoint.sh           /app/entrypoint.sh
 COPY test_k4.sh              /app/test_k4.sh
 COPY find_key.py             /app/find_key.py
 COPY pairs_k4_0040.txt       /app/pairs_k4_0040.txt
+COPY pairs_k4_0005.txt       /app/pairs_k4_0005.txt
 COPY pairs_k5_000d_a0a0.txt  /app/pairs_k5_000d_a0a0.txt
 COPY pairs_k5_0b00_0606.txt  /app/pairs_k5_0b00_0606.txt
 
